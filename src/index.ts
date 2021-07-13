@@ -1,18 +1,20 @@
-const os = require("os");
-const path = require('path');
-const chalk = require('chalk');
+import os from 'os';
+import fs from 'fs';
+import path from 'path';
+import chalk from 'chalk';
+import tracker from './tracker';
 
 /**
  * This is a simple lib for better, controled and beautiful console outputs 
  * This is intended to be simple and small, so dont overengineering it please
  * 
  * @author Felippe Regazio
- * @param {MLOptions|string} options 
+ * @param {Options|string} options 
  * @returns {function}
  */
-const defaults: MLOptions = {
+const defaults: Options = {
   prefix: 'console',
-  lines: true,
+  lines: false,
   lineChar: '·',
   dateLocale: 'en',
   username: true,
@@ -21,10 +23,13 @@ const defaults: MLOptions = {
   mainModule: true,
   disabled: false,
   seamless: false,
+  showLogHash: false,
+  alwaysSave: false,
+  logDir: '',
 };
 
-module.exports = (options: MLOptions = defaults): Function => {
-  const levels: MLLogLevels = { log: 'cyan', info: 'blue', warn: 'yellow', error: 'red', trace: 'magenta' };
+module.exports = (options: Options = defaults): Function => {
+  const levels: LogLevels = { log: 'blue', info: 'cyan', warn: 'yellow', error: 'red', trace: 'magenta' };
 
   options = typeof options === 'string' ?
     { ...defaults, prefix: options } :
@@ -52,7 +57,7 @@ module.exports = (options: MLOptions = defaults): Function => {
     return ` ${process.platform}${options.username ? ':' : ''}` || '';
   }  
 
-  function drawLine(): void {
+  function line(): string {
     let size: number;
 
     try {
@@ -61,49 +66,111 @@ module.exports = (options: MLOptions = defaults): Function => {
       size = 50;
     }
 
-    const line = (options.lineChar).repeat(size);
-    console.log(chalk.gray(line));
+    const line = (options.lineChar).repeat(size);    
+    return chalk.gray(line);
   }
 
-  function header(level: string|null = 'log'): string {
+  function header(level: string|null = 'log', track: FnTrack, colors: any = 2): string {
+    const _chalk = new chalk.Instance({ level: colors });
+
     const color: string = levels[level] || 'cyan';
-    const date: string = options.date ? getDate() : '';
-    const main: string = options.mainModule ? getMain() : '';
+    const headline: string = `[ ${options.prefix.toUpperCase()} ${level.toUpperCase()} ]`;
     const platform: string = options.platform ? getPlatform() : '';
     const username: string = options.username ? getUsername() : '';
-    const headline: string = `[ ${options.prefix.toUpperCase()} ${level.toUpperCase()} ]`; 
+    const main: string = options.mainModule ? getMain() : '';
+    const date: string = options.date ? getDate() : '';
+    const callCount: string = _chalk[color](` x${(track.callCount || 'unknown')}`);
+    const loghash: string = options.showLogHash ? _chalk.gray(` ${track.hash}`) : '';
 
-    const header: string = chalk[color].bold(headline) 
+    const header: string = _chalk[color].bold(headline) 
       + `${platform}`
       + `${username}`
       + `${main}`
       + `${date}`
+      + `${callCount}`
+      + `${loghash}`
       + '\n';
 
     return header;
   }
 
-  function log(level:string, ...args:any): boolean {
-    if (options.disabled) {
-      return false;
-    }
+  function save(dest: string, level:string, argc: any): void {
+    // fileName is date in en mm-dd-yyyy format
+    const fileName = new Date().toISOString()
+      .replace(/T.*/,'')
+      .split('-')
+      .reverse()
+      .join('-');
 
+    // create a writeable stream in append mode pointing to dest file
+    const stream = fs.createWriteStream(`${dest}/${fileName}.log`, { flags: 'a' });
+    // create a new console instance and point its output to our stream 
+    const _console = new console.Console({ stdout: stream, stderr: stream });
+    // trigger the custom console
+    setTimeout(() => { _console[level].apply(null, argc) }, 200);
+  }
+
+  function chain(level?: string, argc?: any, track?: FnTrack): Chain {
+    return {
+      save: (): Chain => {
+        if (options.logDir.trim()) {
+          const _dest: string = path.resolve(options.logDir);
+          const _header: string = `>>>>> ${header(level, track, 0)}`;
+
+          save(_dest, level, [ _header, ...argc ]);
+        }
+
+        return chain(level, argc, track);
+      },
+      
+      once: (): Chain => {
+        track && tracker.mutateFnTrack(track.hash, {
+          fnDisabled: true,
+          once: true
+        });
+        
+        return chain(level, argc, track);
+      }
+    }
+  }
+
+  function noop(): Chain {
+    return {
+      save: () => noop(),
+      once: () => noop(),
+    }
+  }
+
+  function log(level:string, ...args:any): Chain {
     if (typeof level !== 'string' || !Object.keys(levels).includes(level)) {
       return log.apply(null, [ 'log', ...[ level, ...args ] ]);
     }
 
-    if (options.seamless) {
-      console[level].apply(null, args);
-    } else {
-      options.lines && drawLine();
-      // -------------------------------
-      console.log(header(level));
-      console[level].apply(null, args);
-      // -------------------------------
-      options.lines && drawLine();
+    if (options.disabled) {
+      return noop();
     }
 
-    return true;
+    const track: FnTrack = tracker.fnTrack();
+    const _chain = chain(level, args, track);
+    const _log: Function = () => console[level].apply(null, args);
+
+    if (track.fnDisabled) {
+      return noop();
+    }
+
+    if(options.seamless) {
+      _log();
+    } else {
+      options.lines && console.log(line());
+      // -------------------------------
+      console.log(`${header(level, track)}`);
+
+      _log();
+      // -------------------------------
+      options.lines && console.log(line());
+    }
+
+    return options.alwaysSave ? _chain.save() : _chain;
   }
 
   return log;

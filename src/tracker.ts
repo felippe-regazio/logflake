@@ -1,0 +1,53 @@
+import md5 from 'md5';
+
+const FnTracker = class {
+  private fnPool: object;
+
+  constructor() {
+    this.fnPool = {};
+  }
+
+  fnTrack(): FnTrack {
+    const hash: string = this.fnCallHash();
+    const fnTrack: FnTrack = this.fnPool[hash] || {};
+    const callCount: number = fnTrack.callCount ? ++fnTrack.callCount : 1;
+
+    if (!fnTrack || fnTrack.fnDisabled !== true) {
+      Object.assign(fnTrack, <FnTrack>{
+        hash,
+        callCount,
+        once: fnTrack.once,
+        fnDisabled: fnTrack.fnDisabled,
+      });
+    }
+
+    this.fnPool[hash] = fnTrack;
+    
+    return fnTrack;
+  }
+
+  fnCallHash(): string {
+    const _stl = Error.stackTraceLimit;
+    Error.stackTraceLimit = 1000;
+
+    const trace = new Error().stack;
+    Error.stackTraceLimit = _stl;
+
+    return md5(trace);
+  }
+
+  mutateFnTrack(hash: string, overrides: FnTrack): FnTrack {
+    const track = this.fnPool[hash];
+
+    if (track) {
+      this.fnPool[hash] = {
+        ...track,
+        ...overrides
+      };
+    }
+
+    return this.fnPool[hash];
+  }
+}
+
+export default new FnTracker();
