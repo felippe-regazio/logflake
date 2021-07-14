@@ -29,10 +29,19 @@ const defaults = {
     seamless: false,
     showLogHash: false,
     alwaysSave: false,
+    alwaysQuiet: false,
     logDir: '',
+    linebreak: true,
 };
 module.exports = (options = defaults) => {
-    const levels = { log: 'blue', info: 'cyan', warn: 'yellow', error: 'red', trace: 'magenta' };
+    const levels = {
+        log: 'blue',
+        info: 'cyan',
+        warn: 'yellow',
+        error: 'red',
+        trace: 'magenta',
+        quiet: 'black',
+    };
     options = typeof options === 'string' ? Object.assign(Object.assign({}, defaults), { prefix: options }) : Object.assign(Object.assign({}, defaults), options);
     function getDate() {
         return ' ' + new Date().toLocaleString(options.dateLocale);
@@ -82,30 +91,55 @@ module.exports = (options = defaults) => {
             + '\n';
         return header;
     }
-    function save(level, argc) {
-        setTimeout(() => {
-            // create a writeable stream in append mode
-            const stream = fs_1.default.createWriteStream('./out.log', { flags: 'a' });
-            const stdout = stream;
-            const stderr = stream;
-            // create a new console instance and point its output to our stream 
-            const _console = new console.Console({ stdout, stderr });
-            _console[level].apply(null, argc);
-        }, 200);
+    function save(dest, level, argc) {
+        if (level === 'quiet') {
+            level = 'log';
+        }
+        // fileName is date in en mm-dd-yyyy format
+        const fileName = new Date().toISOString()
+            .replace(/T.*/, '')
+            .split('-')
+            .reverse()
+            .join('-');
+        // create a writeable stream in append mode pointing to dest file
+        const stream = fs_1.default.createWriteStream(`${dest}/${fileName}.log`, { flags: 'a' });
+        // create a new console instance and point its output to our stream 
+        const _console = new console.Console({ stdout: stream, stderr: stream });
+        // trigger the custom console
+        setTimeout(() => { _console[level].apply(null, argc); }, 200);
     }
-    function chain(level, argc, track) {
+    function chain(level, argc, hash) {
         return {
             save: () => {
-                const _header = `>>>>> ${header(level, track, 0)}`;
-                save(level, [_header, ...argc]);
-                return chain(level, argc, track);
+                if (options.logDir.trim()) {
+                    const _track = tracker_1.default.read(hash);
+                    const _dest = path_1.default.resolve(options.logDir);
+                    const _header = `>>>>> ${header(level, _track, 0)}`;
+                    const _br = options.linebreak ? '\n' : '';
+                    save(_dest, level, [_header, ...argc, _br]);
+                }
+                else {
+                    console.warn('(!) Could not save the log. The option "logDir" is missing.');
+                }
+                return chain(level, argc, hash);
             },
             once: () => {
-                track && tracker_1.default.mutateFnTrack(track.hash, {
-                    fnDisabled: true,
-                    once: true
+                tracker_1.default.mutateFnTrack(hash, { fnDisabled: true });
+                return chain(level, argc, hash);
+            },
+            reset: () => {
+                tracker_1.default.mutateFnTrack(hash, {
+                    callCount: 0,
+                    fnDisabled: false,
                 });
-                return chain(level, argc, track);
+                return chain(level, argc, hash);
+            },
+            disabled: (is = true) => {
+                tracker_1.default.mutateFnTrack(hash, { fnDisabled: is });
+                return chain(level, argc, hash);
+            },
+            fire: (_level = level) => {
+                return log(_level, ...argc);
             }
         };
     }
@@ -113,6 +147,9 @@ module.exports = (options = defaults) => {
         return {
             save: () => noop(),
             once: () => noop(),
+            reset: () => noop(),
+            fire: () => noop(),
+            disabled: () => noop(),
         };
     }
     function log(level, ...args) {
@@ -123,22 +160,28 @@ module.exports = (options = defaults) => {
             return noop();
         }
         const track = tracker_1.default.fnTrack();
+        const _chain = chain(level, args, track.hash);
         const _log = () => console[level].apply(null, args);
         if (track.fnDisabled) {
             return noop();
         }
-        if (options.seamless) {
-            _log();
+        if (!options.alwaysQuiet && level !== 'quiet') {
+            if (options.seamless) {
+                _log();
+            }
+            else {
+                options.lines && console.log(line());
+                // -------------------------------
+                console.log(`${header(level, track)}`);
+                console.group();
+                _log();
+                console.groupEnd();
+                // -------------------------------
+                options.lines && console.log(line());
+                options.linebreak && console.log('');
+            }
         }
-        else {
-            options.lines && console.log(line());
-            // -------------------------------
-            console.log(`${header(level, track)}`);
-            _log();
-            // -------------------------------
-            options.lines && console.log(line());
-        }
-        return chain(level, args, track);
+        return options.alwaysSave ? _chain.save() : _chain;
     }
     return log;
 };

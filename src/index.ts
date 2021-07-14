@@ -25,11 +25,20 @@ const defaults: Options = {
   seamless: false,
   showLogHash: false,
   alwaysSave: false,
+  alwaysQuiet: false,
   logDir: '',
+  linebreak: true,
 };
 
 module.exports = (options: Options = defaults): Function => {
-  const levels: LogLevels = { log: 'blue', info: 'cyan', warn: 'yellow', error: 'red', trace: 'magenta' };
+  const levels: LogLevels = {
+    log: 'blue',
+    info: 'cyan',
+    warn: 'yellow',
+    error: 'red',
+    trace: 'magenta',
+    quiet: 'black',
+  };
 
   options = typeof options === 'string' ?
     { ...defaults, prefix: options } :
@@ -95,6 +104,8 @@ module.exports = (options: Options = defaults): Function => {
   }
 
   function save(dest: string, level:string, argc: any): void {
+    if (level === 'quiet') { level = 'log' }
+
     // fileName is date in en mm-dd-yyyy format
     const fileName = new Date().toISOString()
       .replace(/T.*/,'')
@@ -110,26 +121,46 @@ module.exports = (options: Options = defaults): Function => {
     setTimeout(() => { _console[level].apply(null, argc) }, 200);
   }
 
-  function chain(level?: string, argc?: any, track?: FnTrack): Chain {
+  function chain(level?: string, argc?: any, hash?: string): Chain {
     return {
       save: (): Chain => {
         if (options.logDir.trim()) {
+          const _track = tracker.read(hash); 
           const _dest: string = path.resolve(options.logDir);
-          const _header: string = `>>>>> ${header(level, track, 0)}`;
+          const _header: string = `>>>>> ${header(level, _track, 0)}`;
+          const _br: string = options.linebreak ? '\n' : '';
 
-          save(_dest, level, [ _header, ...argc ]);
+          save(_dest, level, [ _header, ...argc, _br ]);
+        } else {
+          console.warn('(!) Could not save the log. The option "logDir" is missing.');
         }
 
-        return chain(level, argc, track);
+        return chain(level, argc, hash);
       },
       
       once: (): Chain => {
-        track && tracker.mutateFnTrack(track.hash, {
-          fnDisabled: true,
-          once: true
+        tracker.mutateFnTrack(hash, { fnDisabled: true });
+        
+        return chain(level, argc, hash);
+      },
+
+      reset: (): Chain => {
+        tracker.mutateFnTrack(hash, {
+          callCount: 0,
+          fnDisabled: false,
         });
         
-        return chain(level, argc, track);
+        return chain(level, argc, hash);
+      },
+
+      disabled: (is: boolean = true): Chain => {
+        tracker.mutateFnTrack(hash, { fnDisabled: is });
+
+        return chain(level, argc, hash);
+      },
+
+      fire: (_level: string = level): Chain => {
+        return log(_level, ...argc);
       }
     }
   }
@@ -138,6 +169,9 @@ module.exports = (options: Options = defaults): Function => {
     return {
       save: () => noop(),
       once: () => noop(),
+      reset: () => noop(),
+      fire: () => noop(),
+      disabled: () => noop(),
     }
   }
 
@@ -151,23 +185,27 @@ module.exports = (options: Options = defaults): Function => {
     }
 
     const track: FnTrack = tracker.fnTrack();
-    const _chain = chain(level, args, track);
+    const _chain = chain(level, args, track.hash);
     const _log: Function = () => console[level].apply(null, args);
 
     if (track.fnDisabled) {
       return noop();
     }
 
-    if(options.seamless) {
-      _log();
-    } else {
-      options.lines && console.log(line());
-      // -------------------------------
-      console.log(`${header(level, track)}`);
-
-      _log();
-      // -------------------------------
-      options.lines && console.log(line());
+    if (!options.alwaysQuiet && level !== 'quiet') {
+      if(options.seamless) {
+        _log();
+      } else {
+        options.lines && console.log(line());
+        // -------------------------------
+        console.log(`${header(level, track)}`);
+        console.group();
+        _log();
+        console.groupEnd();
+        // -------------------------------
+        options.lines && console.log(line());
+        options.linebreak && console.log('');
+      }
     }
 
     return options.alwaysSave ? _chain.save() : _chain;

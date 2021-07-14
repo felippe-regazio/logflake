@@ -9,21 +9,20 @@ const FnTracker = class {
         this.fnPool = {};
     }
     fnTrack() {
-        const hash = this.fnCallHash();
+        const hash = this.fnCreateHash();
         const fnTrack = this.fnPool[hash] || {};
         const callCount = fnTrack.callCount ? ++fnTrack.callCount : 1;
         if (!fnTrack || fnTrack.fnDisabled !== true) {
             Object.assign(fnTrack, {
                 hash,
                 callCount,
-                once: fnTrack.once,
                 fnDisabled: fnTrack.fnDisabled,
             });
         }
         this.fnPool[hash] = fnTrack;
         return fnTrack;
     }
-    fnCallHash() {
+    fnCreateHash() {
         const _stl = Error.stackTraceLimit;
         Error.stackTraceLimit = 1000;
         const trace = new Error().stack;
@@ -35,6 +34,9 @@ const FnTracker = class {
         if (track) {
             this.fnPool[hash] = Object.assign(Object.assign({}, track), overrides);
         }
+        return this.fnPool[hash];
+    }
+    read(hash) {
         return this.fnPool[hash];
     }
 };

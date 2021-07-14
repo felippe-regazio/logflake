@@ -11,7 +11,9 @@ type Options = {
   seamless?: boolean;
   showLogHash?: boolean;
   alwaysSave: boolean;
+  alwaysQuiet: boolean;
   logDir: string;
+  linebreak: boolean;
 }
 
 type LogLevels = {
@@ -21,11 +23,13 @@ type LogLevels = {
 type Chain = {
   save: Function;
   once: Function;
+  reset: Function
+  fire: Function,
+  disabled: Function,
 }
 
 type FnTrack = {
   hash?: string;
-  once?: boolean;
   callCount?: number;
   fnDisabled?: boolean;
 }
