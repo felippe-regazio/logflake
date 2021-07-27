@@ -32,7 +32,7 @@ This is an error message
 
 # Installing
 
-You can install it using `npm` or `yarn`
+You can install using `npm` or `yarn`
 
 ```bash
 npm install logflake
@@ -96,23 +96,27 @@ You must have noticed the header with useful information. By default, they are:
 1*              2*     3*       4*              5*                     6*
 ``` 
 
-1. This is the console prefix or namespace. It shows you a prefix (`CONSOLE` by default) that can be changed by you, followed by the log level (`LOG` by default). You you run a log error with 'TEST' as prefix, for example, this would be `[TEST ERROR]`. The header prefixes are colorized in according to the log level: `{ log: 'blue', info: 'cyan', warn: 'yellow', error: 'red', trace: 'magenta', quiet: 'black' }`.
+1. This is the header prefix or namespace, setted as "CONSOLE" by default. It can be changed by you. The last term is the log level (`LOG` by default. The header prefixes are colorized in according to the log level: `{ log: 'blue', info: 'cyan', warn: 'yellow', error: 'red', trace: 'magenta', quiet: 'black' }`.
+
 2. The current Operational System label information.
-3. The current O.S. Username information.
-4. The current mainfile running.
+
+3. The current O.S. username information.
+
+4. The current mainfile that is running the code.
+
 5. The datetime notation (in `en` by default). You can change the locale on the options.
+
 6. How many times this same log() function has been called at the current runtime/process.
 
 You can disable or enable the items `2, 3, 4, 5, 6` on the `LogFlake` options. 
 
-### The log function
+### The log() function
 
 ```
 log(level?: string, ...arguments: any): Chain
 ```
 
-The `log` function API has exactly the same usage of the common `console.log`.  
-So, you can do anything you would do with a console.log, for example:
+We call it the log function because its just a convention, but you can name it whatever yout want. Check how to create a `log` function in the `Getting Started` section of this doc. As already said, the `log` function API has exactly the same usage of the common `console.log`. So, you can do anything you would do with a console.log, for example:
 
 ```js
 const example = { fizz: 1, buzz: 2 };
@@ -245,8 +249,9 @@ log('info', 'This is an example');
 | linebreak | When true, adds a linebreak at the end of each log message | false |
 | onLog | Event triggered everytime a log is fired with the current function (see `Events` on this doc) |
 
-Obs 1. You can check all the `format` available options here: https://nodejs.org/api/util.html#util_util_inspect_object_options  
-Obs 2. Every `log()` function call is internally marked with a unique hash, so we can count how many times it was called, for example. 
+> Obs 1. You can check all the `format` available options here: https://nodejs.org/api/util.html#util_util_inspect_object_options  
+
+> Obs 2. Every `log()` log function position on the code is marked with a unique hash, so we can count how many times it was called, for example. 
 
 # Namespaces (Prefix)
 
@@ -320,17 +325,17 @@ The log above will be fired only once, even inside a loop, and its output will b
 
 ### Referencing
 
-You can create a "reference" o a log function by assigning it to a variable or const:
+You can create a "reference" to a log function by assigning it to a variable or const:
 
 ```js
 // the log will be fired and assigned to a const
 const logError = log('Unexpected error');
 
-// the log will be save
+// the log will be saved
 logError.save();
 ```
 
-In the example bellow, the log will be triggered, assigned to the const, then saved. But you can have a situation when you dont want to trigger the log while assigning it to a variable, then you can use quiet as log level, and the `fire()` method to trigger the log. For example:
+In the example bellow, the log will be triggered, assigned to the const, then saved. But you can have a situation when you dont want to immediately trigger the log while assigning it to a variable, then you can use quiet as log level, and the `fire()` method to trigger the log. For example:
 
 ```js
 const logError = log('quiet', 'Unexpected error');
@@ -352,7 +357,7 @@ log('This is an example')
 
 # Chained Methods
 
-As said, you can use methods chained to you log function to change its behavior. The methods are:
+As said, you can use chained methods to change your log behavior. The methods are:
 
 ### save
 
@@ -360,7 +365,7 @@ As said, you can use methods chained to you log function to change its behavior.
 save(options?: SaveOptions): chain  
 ```
 
-Saves the log output to a local file. This method depends of the option: `logDir`. The `logDir` option will specify where the log files must be saved. When calling "save()" a file having the current date as name will be created on the `logDir`. All the logs saved for that day with the current instance will be saved on this file, and so on.  
+Saves the log output to a local file. This method depends of the option: `logDir`. The `logDir` option will specify where the log files must be saved. When calling "save()" a file having the current date as name will be created on the `logDir`. All the logs saved on the current day will be saved on this file, and so on.  
 
 Usage:
 
@@ -375,7 +380,7 @@ log('Not saved');
 log('Will be saved').save();
 ``` 
 
-When the option `alwaysSave` is true, this method is implicitly called for all log messages. When alwaysSave is true, explicity `save()` callings are ignored to avoid duplication. If you set `{ force: true }` as option, your explicit `save()` methods will be fired even with `alwaysSave` on.  
+When the option `alwaysSave` is true, the save method will be implicitly called for all log messages. When `alwaysSave` is true, the explicity `save()` callings will be ignored to avoid duplication. If you set `{ force: true }` as save() option, it will be fired twice: one due the implicit `alwaysSave`, another due the explicit save({ force: true }).  
 
 For example:
 
@@ -383,10 +388,10 @@ For example:
 const logger = require('logflake');
 const log = logger({ logDir: './logs/', alwaysSave: true });
 
-// this log message wont be saved
+// this log message will be saved 1 time
 log('Will be saved A');
 
-// this log message wont be saved 1 time
+// this log message will be saved 1 time
 log('Will be saved B').save();
 
 // this log will be saved 2 times, one
@@ -402,7 +407,7 @@ The only available option on `save` is `{ force }`.
 once(): chain  
 ```
 
-Tells the log to be fired only one time for the current runtime. If you are inside a big for loop, a route on your application and for some reason a unique log is useful for you, or if you just dont want thounsands of duplicated logs, you can use once:
+Tells the log to be fired only one time for the current runtime. If you are inside a big for loop, a route and for some reason a deduplicated log is useful for you, or if you just dont want thounsands of duplicated logs outputs, you can use once:
 
 ```js
 for(let i = 0; i < 1000; i++) {
@@ -411,7 +416,7 @@ for(let i = 0; i < 1000; i++) {
 }
 ``` 
 
-The log chain also will occur only once:
+The log chain will also occur only once:
 
 ```js
 for(let i = 0; i < 1000; i++) {
@@ -423,33 +428,35 @@ for(let i = 0; i < 1000; i++) {
 ## get
 
 ```
-get(callback: Function, colors: boolean = false): chain  
+get(callback: Function, colors: boolean = false): chain
 ```
 
-Gets the current log output and a bunch of other useful information. This is handy when you want to send your log output/information to other destinations as a database, slack, telegram, etc.  
+Gets the current log output and a bunch of other useful information. This is handy when you want to send an specific log output/information to other destinations as a database, slack, telegram, etc.  
 
 ```js
 log('error', 'Example').get((output, level, hash, trace) => {
   // do whatever you want with the params
+  // output = complete log output as string
+  // level  = ERROR
+  // hash   = example: 912ec803b2ce49e4a541068d495ab570
+  // trace  = a log trace of this log call
 });
 ```
 
-This function accepts a callback that returns the log `output, level, hash and trace`. For the example above, the output will be the complete log output as string, the level will be `ERROR`, a unique hash and a trace will also be generated for that function. If this very same function has been called 1000 times, the hash will be the same since is a hash per function. Your callback will have this signature:
+This function accepts a callback that returns the log `output, level, hash and trace`. Note: if this very same function has been called 1000 times, the hash will be the same since is a hash per function. Your callback will have this signature:
 
 ```
 cb(output: string, level: string, hash: string, trace: string): unknown
 ```
 
-The params received are:
+The callback params are:
 
 | param | description |
 |--|--|--|
 | output | the log output as string, with the header, exactly as showed on the console (std) |
-| level | the log level (log, info, error, warn, trace, quiet) |
+| level | the log level (LOG, INFO, ERROR, WARN, TRACE, QUIET) |
 | hash | a unique identifier for that log call (the same log call returns the same unique hash) |
-| trace | a stack trace of the log |
-
-The output level for the example would be `ERROR`, and the output would be:
+| trace | a stack trace of the log call |
 
 ``` 
 [ CONSOLE ERROR ] linux: username (main: test.js) 7/26/2021, 9:42:49 PM x1 
@@ -458,7 +465,7 @@ Example
 ··························································································
 ```
 
-This function accepts a second boolean parameter which gets the output with colors notations. Default is false.
+This function accepts a second boolean parameter which gets the output with color notations. Default is false.
 
 ## fire
 
@@ -466,7 +473,7 @@ This function accepts a second boolean parameter which gets the output with colo
 fire(level?: string): chain
 ```
 
-When using a reference, you can use `fire` to trigger the referenced log. When using `fire`, you also gets a new log function. The `level` parameter on this function overrides the original log level. For example:
+When using references, you can use `fire` to trigger the referenced log. When using `fire`, you also gets a new log function. The `level` parameter on this function overrides the original log level. For example:
 
 ```js
 const logError = log('quiet', 'Unexpected error');
@@ -480,7 +487,7 @@ if (anotherErrorCheck) {
 }
 ```
 
-You can also use different log levels for same reference with fire since it returns a new log:
+You can also use different log levels for same reference:
 
 ```js
 const logGeneric = log('quiet', 'Generic message');
@@ -490,7 +497,7 @@ if (someErrorCheck) {
 }
 
 if (anotherErrorCheck) {
-  logError.fire('warn'); // log WARN "Generic message" x1
+  logError.fire('warn');  // log WARN "Generic message" x1
 }
 ```
 
@@ -511,13 +518,13 @@ log('Hello world');
 log('error', 'Oh no, an error!');
 ```
 
-On the example above, the `onLog` function callback will be triggered 2 times, passing the `output, level, hash and trace` of the log functions which triggered the callback. Everytime a log is generated on this instance (function), the `onLog` callback will be triggered. Your callback will have this signature:
+On the example above, the `onLog` function callback will be triggered 2 times, passing the `output, level, hash and trace` of the original log functions. Everytime a log is generated with this instance (function), the `onLog` callback will be triggered. Your callback will have this signature:
 
 ```
 cb(output: string, level: string, hash: string, trace: string): unknown
 ```
 
-This is very very handy if you want to create plugins or new transporters for LogFlack. You can use it to capture the logs and send to a database, slack, telegram or whatever you want.
+This is very very handy if you want to create plugins or new transporters for `LogFlake`. You can use it to capture the logs and send to a database, slack, telegram or whatever you want.
 
 # About
 
