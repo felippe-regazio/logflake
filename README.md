@@ -6,14 +6,18 @@ LogFlake is a NodeJS console logger with superpowers. It has the same API as the
 const logger = require('logflake');
 const log = logger({ logDir: './logs' });
 
+/**
+ * here are some usage examples. to the last one (the error) we ask the logger
+ * to save the output on a logfile at ./logs. you can also choose to save all
+ * the logs output automatically, keep reading the docs to know more about
+ */
+
 log('Hello world');
 
 log('Wellcome %s', 'dev');
 
 log('warn', 'Oh no, this is a waning');
 
-// save this output to a logfile at ./logs. you can also choose to save
-// all the logs automatically, keep reading the docs to know how
 log('error', 'Oh no, an error has occurred!').save();
 ``` 
 
