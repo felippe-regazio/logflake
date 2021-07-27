@@ -84,7 +84,6 @@ module.exports = (options: Options = defaults): Function => {
       _output.printf(level, args, track.hash);
     }
 
-    
     const _chain = chain(level, args, track.hash);
     _chain.get((...args: any) => options.onLog(...args));
     
