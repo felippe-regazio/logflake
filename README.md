@@ -395,7 +395,7 @@ log('Will be saved C').save({ force: true});
 
 The only available option on `save` is `{ force }`.
 
-### once
+## once
 
 ```
 once(): chain  
@@ -419,7 +419,7 @@ for(let i = 0; i < 1000; i++) {
 }
 ```
 
-### get
+## get
 
 ```
 get(callback: Function): chain  
@@ -443,7 +443,7 @@ Example
 ··························································································
 ```
 
-### fire
+## fire
 
 ```
 fire(level?: string): Log
