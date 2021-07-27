@@ -422,7 +422,7 @@ for(let i = 0; i < 1000; i++) {
 ## get
 
 ```
-get(callback: Function): chain  
+get(callback: Function): chain
 ```
 
 Gets the current log function output. This is useful if you want to send you log output to other destinations as a database, slack, telegram, etc. This function accepts a callback that returns the level and the output:
@@ -446,7 +446,7 @@ Example
 ## fire
 
 ```
-fire(level?: string): Log
+fire(level?: string): chain
 ```
 
 When using a reference, you can use `fire` to trigger the referenced log. When using `fire`, you also gets a new log function. The `level` parameter on this function overrides the original log level. For example:
@@ -479,7 +479,7 @@ if (anotherErrorCheck) {
 
 # Events
 
-Under construction
+Under constructionReferencing
 
 # About
 
