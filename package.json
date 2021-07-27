@@ -1,12 +1,11 @@
 {
-  "name": "microlog",
+  "name": "logflake",
   "version": "1.0.0",
-  "description": "Console message beautifier for Node",
-  "main": "index.min.js",
+  "description": "Better console messages for NodeJS",
+  "main": "dist/index.js",
   "scripts": {
+    "build": "tsc",
     "dev": "tsc --watch",
-    "build": "tsc && npm run minify",
-    "minify": "uglifyjs --compress --mangle --source-map \"url='index.min.js.map'\" -o ./dist/index.min.js -- ./dist/index.js",
     "test": "jest ./test"
   },
   "author": "Felippe Regazio",
@@ -18,7 +17,6 @@
   },
   "dependencies": {
     "chalk": "^4.1.1",
-    "md5": "^2.3.0",
-    "uglify-js": "^3.13.10"
+    "md5": "^2.3.0"
   }
 }

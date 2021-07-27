@@ -1,19 +1,22 @@
 type Options = {
   prefix?: string;
+  colors?: boolean,
   lines?: boolean;
-  lineChar?: string;
+  header?: boolean;
+  linesChar?: string;
   dateLocale?: string;
   username?: boolean;
-  date?: boolean;
+  datetime?: boolean;
   platform?: boolean;
   mainModule?: boolean;
   disabled?: boolean;
   seamless?: boolean;
   showLogHash?: boolean;
-  alwaysSave: boolean;
-  alwaysQuiet: boolean;
-  logDir: string;
-  linebreak: boolean;
+  alwaysSave?: boolean;
+  alwaysQuiet?: boolean;
+  logDir?: string;
+  format?: object;
+  linebreak?: boolean;
 }
 
 type LogLevels = {
@@ -21,6 +24,7 @@ type LogLevels = {
 }
 
 type Chain = {
+  get: Function;
   save: Function;
   once: Function;
   reset: Function
@@ -32,4 +36,8 @@ type FnTrack = {
   hash?: string;
   callCount?: number;
   fnDisabled?: boolean;
+}
+
+type SaveOptions = {
+  force?: boolean;
 }

@@ -1,28 +1,37 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
+var __spreadArray = (this && this.__spreadArray) || function (to, from) {
+    for (var i = 0, il = from.length, j = to.length; i < il; i++, j++)
+        to[j] = from[i];
+    return to;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const os_1 = __importDefault(require("os"));
-const fs_1 = __importDefault(require("fs"));
-const path_1 = __importDefault(require("path"));
-const chalk_1 = __importDefault(require("chalk"));
-const tracker_1 = __importDefault(require("./tracker"));
-/**
- * This is a simple lib for better, controled and beautiful console outputs
- * This is intended to be simple and small, so dont overengineering it please
- *
- * @author Felippe Regazio
- * @param {Options|string} options
- * @returns {function}
- */
-const defaults = {
+var path_1 = __importDefault(require("path"));
+var tracker_1 = __importDefault(require("./tracker"));
+var helpers_1 = __importDefault(require("./helpers"));
+var output_1 = __importDefault(require("./output"));
+var defaults = {
     prefix: 'console',
-    lines: false,
-    lineChar: '·',
+    colors: true,
+    header: true,
+    lines: true,
+    linesChar: '·',
     dateLocale: 'en',
     username: true,
-    date: true,
+    datetime: true,
     platform: true,
     mainModule: true,
     disabled: false,
@@ -31,157 +40,72 @@ const defaults = {
     alwaysSave: false,
     alwaysQuiet: false,
     logDir: '',
-    linebreak: true,
+    format: {},
+    linebreak: false,
 };
-module.exports = (options = defaults) => {
-    const levels = {
-        log: 'blue',
-        info: 'cyan',
-        warn: 'yellow',
-        error: 'red',
-        trace: 'magenta',
-        quiet: 'black',
-    };
-    options = typeof options === 'string' ? Object.assign(Object.assign({}, defaults), { prefix: options }) : Object.assign(Object.assign({}, defaults), options);
-    function getDate() {
-        return ' ' + new Date().toLocaleString(options.dateLocale);
-    }
-    function getMain() {
-        var _a;
-        const hasMain = (_a = require === null || require === void 0 ? void 0 : require.main) === null || _a === void 0 ? void 0 : _a.filename;
-        const info = hasMain && path_1.default.parse(require.main.filename);
-        return info ? ` (main: ${info.name}${info.ext})` : '';
-    }
-    function getUsername() {
-        const userinfo = os_1.default.userInfo();
-        const username = userinfo.username;
-        return ` ${username}` || '';
-    }
-    function getPlatform() {
-        return ` ${process.platform}${options.username ? ':' : ''}` || '';
-    }
-    function line() {
-        let size;
-        try {
-            size = process.stdout.columns / 2;
+module.exports = function (options) {
+    if (options === void 0) { options = defaults; }
+    options = typeof options === 'string' ? __assign(__assign({}, defaults), { prefix: options }) : __assign(__assign({}, defaults), options);
+    var _output = new output_1.default(options);
+    var _helpers = new helpers_1.default(options);
+    function log(level) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
         }
-        catch (error) {
-            size = 50;
+        var logLevels = _helpers.getLogLevels();
+        if (typeof level !== 'string' || !Object.keys(logLevels).includes(level)) {
+            return log.apply(null, __spreadArray(['log'], __spreadArray([level], args)));
         }
-        const line = (options.lineChar).repeat(size);
-        return chalk_1.default.gray(line);
-    }
-    function header(level = 'log', track, colors = 2) {
-        const _chalk = new chalk_1.default.Instance({ level: colors });
-        const color = levels[level] || 'cyan';
-        const headline = `[ ${options.prefix.toUpperCase()} ${level.toUpperCase()} ]`;
-        const platform = options.platform ? getPlatform() : '';
-        const username = options.username ? getUsername() : '';
-        const main = options.mainModule ? getMain() : '';
-        const date = options.date ? getDate() : '';
-        const callCount = _chalk[color](` x${(track.callCount || 'unknown')}`);
-        const loghash = options.showLogHash ? _chalk.gray(` ${track.hash}`) : '';
-        const header = _chalk[color].bold(headline)
-            + `${platform}`
-            + `${username}`
-            + `${main}`
-            + `${date}`
-            + `${callCount}`
-            + `${loghash}`
-            + '\n';
-        return header;
-    }
-    function save(dest, level, argc) {
-        if (level === 'quiet') {
-            level = 'log';
+        if (options.disabled) {
+            return _helpers.noopChain(chain);
         }
-        // fileName is date in en mm-dd-yyyy format
-        const fileName = new Date().toISOString()
-            .replace(/T.*/, '')
-            .split('-')
-            .reverse()
-            .join('-');
-        // create a writeable stream in append mode pointing to dest file
-        const stream = fs_1.default.createWriteStream(`${dest}/${fileName}.log`, { flags: 'a' });
-        // create a new console instance and point its output to our stream 
-        const _console = new console.Console({ stdout: stream, stderr: stream });
-        // trigger the custom console
-        setTimeout(() => { _console[level].apply(null, argc); }, 200);
+        var track = tracker_1.default.fnTrack();
+        if (track.fnDisabled) {
+            return _helpers.noopChain(chain);
+        }
+        if (!options.alwaysQuiet && level !== 'quiet') {
+            _output.printf(level, args, track.hash);
+        }
+        var _chain = chain(level, args, track.hash);
+        return options.alwaysSave ? _chain.save() : _chain;
     }
     function chain(level, argc, hash) {
+        var chalk = _helpers.getChalk();
+        var keepChain = function () { return chain(level, argc, hash); };
         return {
-            save: () => {
-                if (options.logDir.trim()) {
-                    const _track = tracker_1.default.read(hash);
-                    const _dest = path_1.default.resolve(options.logDir);
-                    const _header = `>>>>> ${header(level, _track, 0)}`;
-                    const _br = options.linebreak ? '\n' : '';
-                    save(_dest, level, [_header, ...argc, _br]);
-                }
-                else {
-                    console.warn('(!) Could not save the log. The option "logDir" is missing.');
-                }
-                return chain(level, argc, hash);
+            save: function () {
+                options.logDir ?
+                    _output.save(path_1.default.resolve(options.logDir), level, argc, hash) :
+                    console.trace(chalk.yellow('(!) Could not save the log. The "logDir" option is missing.'));
+                return keepChain();
             },
-            once: () => {
+            once: function () {
                 tracker_1.default.mutateFnTrack(hash, { fnDisabled: true });
-                return chain(level, argc, hash);
+                return keepChain();
             },
-            reset: () => {
+            reset: function () {
                 tracker_1.default.mutateFnTrack(hash, {
                     callCount: 0,
                     fnDisabled: false,
                 });
-                return chain(level, argc, hash);
+                return keepChain();
             },
-            disabled: (is = true) => {
+            disabled: function (is) {
+                if (is === void 0) { is = true; }
                 tracker_1.default.mutateFnTrack(hash, { fnDisabled: is });
-                return chain(level, argc, hash);
+                return keepChain();
             },
-            fire: (_level = level) => {
-                return log(_level, ...argc);
+            get: function (cb, colors) {
+                if (colors === void 0) { colors = false; }
+                cb && cb(level, _output.getOutput(level, argc, hash, colors));
+                return keepChain();
+            },
+            fire: function (_level) {
+                if (_level === void 0) { _level = level; }
+                return log.apply(void 0, __spreadArray([_level], argc));
             }
         };
-    }
-    function noop() {
-        return {
-            save: () => noop(),
-            once: () => noop(),
-            reset: () => noop(),
-            fire: () => noop(),
-            disabled: () => noop(),
-        };
-    }
-    function log(level, ...args) {
-        if (typeof level !== 'string' || !Object.keys(levels).includes(level)) {
-            return log.apply(null, ['log', ...[level, ...args]]);
-        }
-        if (options.disabled) {
-            return noop();
-        }
-        const track = tracker_1.default.fnTrack();
-        const _chain = chain(level, args, track.hash);
-        const _log = () => console[level].apply(null, args);
-        if (track.fnDisabled) {
-            return noop();
-        }
-        if (!options.alwaysQuiet && level !== 'quiet') {
-            if (options.seamless) {
-                _log();
-            }
-            else {
-                options.lines && console.log(line());
-                // -------------------------------
-                console.log(`${header(level, track)}`);
-                console.group();
-                _log();
-                console.groupEnd();
-                // -------------------------------
-                options.lines && console.log(line());
-                options.linebreak && console.log('');
-            }
-        }
-        return options.alwaysSave ? _chain.save() : _chain;
     }
     return log;
 };

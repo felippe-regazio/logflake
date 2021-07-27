@@ -1,24 +1,17 @@
-import os from 'os';
-import fs from 'fs';
 import path from 'path';
-import chalk from 'chalk';
 import tracker from './tracker';
+import Helpers from './helpers';
+import Output from './output';
 
-/**
- * This is a simple lib for better, controled and beautiful console outputs 
- * This is intended to be simple and small, so dont overengineering it please
- * 
- * @author Felippe Regazio
- * @param {Options|string} options 
- * @returns {function}
- */
 const defaults: Options = {
   prefix: 'console',
-  lines: false,
-  lineChar: '·',
+  colors: true,
+  header: true,
+  lines: true,
+  linesChar: '·',
   dateLocale: 'en',
   username: true,
-  date: true,
+  datetime: true,
   platform: true,
   mainModule: true,
   disabled: false,
@@ -27,121 +20,102 @@ const defaults: Options = {
   alwaysSave: false,
   alwaysQuiet: false,
   logDir: '',
-  linebreak: true,
+  format: {},
+  linebreak: false,
 };
 
+/**
+ * This factory returns a "log" function which has the same API than a Console. 
+ * The "log" function accepts two params, log([level], args). WHen the first one 
+ * is a level param, it changes the log level, style or behavior, otherwise, all
+ * the params will be used to construct the log output message. This factory
+ * accepts a set of options which can be a string or an object.
+ * 
+ * Options as String: will change the Log output namespace on the header info
+ * Options as Object: can be useful to set and motify a lot of thigs
+ * For further information, check the complete documentation on the package repo.
+ * 
+ * @author  Felippe Regazio
+ * @param   {Options|string} options Can be an string or Options object 
+ * @returns {function}       Returns a log function with chained methods
+ */
 module.exports = (options: Options = defaults): Function => {
-  const levels: LogLevels = {
-    log: 'blue',
-    info: 'cyan',
-    warn: 'yellow',
-    error: 'red',
-    trace: 'magenta',
-    quiet: 'black',
-  };
-
   options = typeof options === 'string' ?
     { ...defaults, prefix: options } :
     { ...defaults, ...options };
 
-  function getDate(): string {
-    return ' ' + new Date().toLocaleString(options.dateLocale);
-  }
+  const _output = new Output(options);
+  const _helpers = new Helpers(options);
 
-  function getMain(): string {
-    const hasMain = require?.main?.filename;
-    const info = hasMain && path.parse(require.main.filename);
+  /**
+   * This is a log function with same API as Console. The first param can be a valid log level,
+   * to change the log style and output behavior. By default, every log has a header with
+   * useful information about the Event, environment and the log self; the message constructed 
+   * from the arguments passed by you; and a Chain of useful modifiers. Ex:
+   * 
+   * log('A message')                 Is equivalent to console.log('Im a message');
+   * log('error', 'A message')        Is equivalent to console.error('Im A message');
+   * log('A', 'message')              Is equivalent to console.log('A', 'message');
+   * log('trace', 'A %s', 'message')  Is equivalent to console.trace('A %s', 'message');
+   * 
+   * @param   {string} level This is optional, can be [log|info|warn|error|trace|quiet]
+   * @param   {any}    args  Any kind or number of args with exaclty same api as Console
+   * @returns {Chain}  A chain of methods to change/control the log behavior 
+   */
+  function log(level:string, ...args:any): Chain {
+    const logLevels = _helpers.getLogLevels();
 
-    return info ? ` (main: ${info.name}${info.ext})` : '';
-  }
-
-  function getUsername(): string {
-    const userinfo = os.userInfo();
-    const username = userinfo.username;
+    if (typeof level !== 'string' || !Object.keys(logLevels).includes(level)) {
+      return log.apply(null, [ 'log', ...[ level, ...args ] ]);
+    }
     
-    return ` ${username}` || ''; 
-  }
-
-  function getPlatform(): string {
-    return ` ${process.platform}${options.username ? ':' : ''}` || '';
-  }  
-
-  function line(): string {
-    let size: number;
-
-    try {
-      size = process.stdout.columns / 2;
-    } catch(error) {
-      size = 50;
+    if (options.disabled) {
+      return _helpers.noopChain(chain);
     }
 
-    const line = (options.lineChar).repeat(size);    
-    return chalk.gray(line);
-  }
+    const track: FnTrack = tracker.fnTrack();
 
-  function header(level: string|null = 'log', track: FnTrack, colors: any = 2): string {
-    const _chalk = new chalk.Instance({ level: colors });
+    if (track.fnDisabled) {
+      return _helpers.noopChain(chain);
+    }
+    
+    if (!options.alwaysQuiet && level !== 'quiet') {
+      _output.printf(level, args, track.hash);
+    }
+    
+    const _chain = chain(level, args, track.hash);
+    return options.alwaysSave ? _chain.save({ force: true }) : _chain;
+  }  
 
-    const color: string = levels[level] || 'cyan';
-    const headline: string = `[ ${options.prefix.toUpperCase()} ${level.toUpperCase()} ]`;
-    const platform: string = options.platform ? getPlatform() : '';
-    const username: string = options.username ? getUsername() : '';
-    const main: string = options.mainModule ? getMain() : '';
-    const date: string = options.date ? getDate() : '';
-    const callCount: string = _chalk[color](` x${(track.callCount || 'unknown')}`);
-    const loghash: string = options.showLogHash ? _chalk.gray(` ${track.hash}`) : '';
+  /**
+   * This factory returns a Chain that uses the same parameters passed to the Log (parent)
+   * function to modify and control the subsequent behavior. Each methods always return the
+   * same Chain passed the last params to the next one, allowing infinite modifiers chaining.
+   * 
+   * @param   {string} level the level passed or infered from log() fn 
+   * @param   {any}    argc  the args passed to the log() fn
+   * @param   {string} hash  the hash generated by the tracker on the log() fn
+   * @returns {Chain}        a chain of methods to control and modify the log flow
+   */
+  function chain(level?: string, argc?: Array<any>, hash?: string): Chain {
+    const chalk = _helpers.getChalk();
+    const keepChain = () => chain(level, argc, hash);
 
-    const header: string = _chalk[color].bold(headline) 
-      + `${platform}`
-      + `${username}`
-      + `${main}`
-      + `${date}`
-      + `${callCount}`
-      + `${loghash}`
-      + '\n';
-
-    return header;
-  }
-
-  function save(dest: string, level:string, argc: any): void {
-    if (level === 'quiet') { level = 'log' }
-
-    // fileName is date in en mm-dd-yyyy format
-    const fileName = new Date().toISOString()
-      .replace(/T.*/,'')
-      .split('-')
-      .reverse()
-      .join('-');
-
-    // create a writeable stream in append mode pointing to dest file
-    const stream = fs.createWriteStream(`${dest}/${fileName}.log`, { flags: 'a' });
-    // create a new console instance and point its output to our stream 
-    const _console = new console.Console({ stdout: stream, stderr: stream });
-    // trigger the custom console
-    setTimeout(() => { _console[level].apply(null, argc) }, 200);
-  }
-
-  function chain(level?: string, argc?: any, hash?: string): Chain {
     return {
-      save: (): Chain => {
-        if (options.logDir.trim()) {
-          const _track = tracker.read(hash); 
-          const _dest: string = path.resolve(options.logDir);
-          const _header: string = `>>>>> ${header(level, _track, 0)}`;
-          const _br: string = options.linebreak ? '\n' : '';
+      save: (saveOpts: SaveOptions = {}): Chain => {
+        const mustSave = !options.alwaysSave || (options.alwaysSave && saveOpts.force);
 
-          save(_dest, level, [ _header, ...argc, _br ]);
-        } else {
-          console.warn('(!) Could not save the log. The option "logDir" is missing.');
-        }
-
-        return chain(level, argc, hash);
+        options.logDir && mustSave ?
+          _output.save(path.resolve(options.logDir), level, argc, hash) :
+          console.trace(chalk.yellow('(!) Could not save the log. The "logDir" option is missing.'));
+        
+        return keepChain();
       },
       
       once: (): Chain => {
         tracker.mutateFnTrack(hash, { fnDisabled: true });
         
-        return chain(level, argc, hash);
+        return keepChain();
       },
 
       reset: (): Chain => {
@@ -150,65 +124,25 @@ module.exports = (options: Options = defaults): Function => {
           fnDisabled: false,
         });
         
-        return chain(level, argc, hash);
+        return keepChain();
       },
 
       disabled: (is: boolean = true): Chain => {
         tracker.mutateFnTrack(hash, { fnDisabled: is });
 
-        return chain(level, argc, hash);
+        return keepChain();
+      },
+
+      get: (cb: Function, colors: boolean = false) => {
+        cb && cb(level, _output.getOutput(level, argc, hash, colors));
+
+        return keepChain();
       },
 
       fire: (_level: string = level): Chain => {
         return log(_level, ...argc);
-      }
+      }      
     }
-  }
-
-  function noop(): Chain {
-    return {
-      save: () => noop(),
-      once: () => noop(),
-      reset: () => noop(),
-      fire: () => noop(),
-      disabled: () => noop(),
-    }
-  }
-
-  function log(level:string, ...args:any): Chain {
-    if (typeof level !== 'string' || !Object.keys(levels).includes(level)) {
-      return log.apply(null, [ 'log', ...[ level, ...args ] ]);
-    }
-
-    if (options.disabled) {
-      return noop();
-    }
-
-    const track: FnTrack = tracker.fnTrack();
-    const _chain = chain(level, args, track.hash);
-    const _log: Function = () => console[level].apply(null, args);
-
-    if (track.fnDisabled) {
-      return noop();
-    }
-
-    if (!options.alwaysQuiet && level !== 'quiet') {
-      if(options.seamless) {
-        _log();
-      } else {
-        options.lines && console.log(line());
-        // -------------------------------
-        console.log(`${header(level, track)}`);
-        console.group();
-        _log();
-        console.groupEnd();
-        // -------------------------------
-        options.lines && console.log(line());
-        options.linebreak && console.log('');
-      }
-    }
-
-    return options.alwaysSave ? _chain.save() : _chain;
   }
 
   return log;
