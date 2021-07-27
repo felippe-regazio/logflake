@@ -339,6 +339,16 @@ logError.fire('error').save();
 
 You can see more details about the methods you can use with the log function below.
 
+### Referencing
+
+Any `log` call has a chain of useful methods. The example below runs only once and saves its output on a local file. See the next section of this documentation to know more about the chained methods.
+
+```js
+log('This is an example')
+  .once()
+  .save();
+```
+
 # Chained Methods
 
 As said, you can use methods chained to you log function to change its behavior. The methods are:
