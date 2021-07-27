@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "Better console messages for NodeJS",
   "main": "dist/index.js",
+  "files": [
+    "dist/",
+    "README.md"
+  ],  
   "scripts": {
     "dev": "tsc --watch",
     "test": "jest ./test",
@@ -18,5 +22,13 @@
   "dependencies": {
     "chalk": "^4.1.1",
     "md5": "^2.3.0"
-  }
+  },
+  "keywords": [
+    "log",
+    "logger",
+    "track",
+    "output",
+    "console",
+    "transport"
+  ]
 }
