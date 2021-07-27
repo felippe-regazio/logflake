@@ -1,6 +1,6 @@
 # LogFlake
 
-LogFlake is a NodeJS console logger with superpowers. It has the same API as the usual `Console` but with beautified output, header with timestamp and useful information, trackability and a toolset for better control you application log messages.
+LogFlake is a NodeJS console logger with superpowers. It has the same API as the usual `Console` but with beautified output, header with timestamp and useful information, trackability and a toolset for a better control of your application log messages.
 
 ```js
 const logger = require('logflake');
