@@ -17,6 +17,7 @@ type Options = {
   logDir?: string;
   format?: object;
   linebreak?: boolean;
+  onLog?: Function;
 }
 
 type LogLevels = {

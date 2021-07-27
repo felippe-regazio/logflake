@@ -30,7 +30,7 @@ This is an error message
 ··························································································
 ``` 
 
-# Installation
+# Installing
 
 You can install it using `npm` or `yarn`
 
@@ -41,16 +41,18 @@ npm install logflake
 or
 
 ```bash
-yard add logflake
+yarn add logflake
 ```
 
 # Getting Started
 
-First import LogFlake and create a logger
+Import LogFlake, create a logger function and log whatever you want.
 
 ```js
 const logger = require('logflake');
 const log = logger();
+
+log('Hello world!');
 ```
 
 Or if you prefer EJS
@@ -58,17 +60,21 @@ Or if you prefer EJS
 ```js
 import logger from 'logflake';
 const log = logger();
+
+log('Hello world!');
 ```
 
 When using CJS you can use a shorthand
 
 ```js
 const log = require('logflake')();
+
+log('Hello world!');
 ```
 
 # Basic Usage
 
-To log a message, you simply do:
+To log a message or anything, you simply do:
 
 ```js
 log('Hello World');
@@ -101,6 +107,10 @@ You can disable or enable the items `2, 3, 4, 5, 6` on the `LogFlake` options.
 
 ### The log function
 
+```
+log(level?: string, ...arguments: any): Chain
+```
+
 The `log` function API has exactly the same usage of the common `console.log`.  
 So, you can do anything you would do with a console.log, for example:
 
@@ -111,10 +121,23 @@ log('Hello %s', 'world');
 log('This is an object', example);
 ```
 
-### Console levels
+The first argument of the `log()` function can be used to control the Log Level you want to use.
+When you dont specify a level, the common `log` level will be used by default.
 
-The first `log()` function argument can be used to control the Log Level you want to use.
-When you dont specify a level, the `log` level will be used by default. To output an error message:
+### Log Levels
+
+The console levels are:
+
+| level | description | prefix color |
+|---|---|---|
+| log | simple log message | blue |
+| info | equivalent to log | cyan |
+| warn | outputs a warn message | yellow |
+| error | outputs an error message | red |
+| trace | outputs a console trace | magenta |
+| quiet | do not output to current std | no color |
+
+To output an error message, for example:
 
 ```js
 log('error', 'This is an error message');
@@ -137,19 +160,6 @@ const error = new Error('Unexpected error');
 
 log('error', 'An unexpected error has occurred: ', error);
 ``` 
-
-### Available levels
-
-The console levels are:
-
-```
-- log   - simple log message           (prefix blue)
-- info  - equivalent to log            (prefix cyan)
-- warn  - outputs a warn message       (prefix yellow)
-- error - outputs an error message     (prefix red)
-- trace - outputs a console trace      (prefix magenta)
-- quiet - do not output to current std (no color needed)
-```
 
 ### Examples
 
@@ -184,58 +194,6 @@ Generating a log message in quiet mode:
 
 ```js
 log('quiet', 'Anything will be outputed on std');
-```
-
-# Namespaces
-
-For every `log` function instance you can have a `namespace`. This is simply a `prefix` showed on the console message header.
-To change the console namespace (prefix) you can pass a string when creating the `log()` function, or pass it as an option.
-
-### Using namespaces:
-
-You can define a namespace directly when creating the `log()` function: 
-
-```js
-const logger = require('logflake');
-const log = logger('Hello'); // "HELLO" will be the Namespace
-
-log('Hello world');
-log('error', 'This is an error message');
-```
-
-Will output:
-
-```log
-[ HELLO LOG ] linux: username (main: test.js) 7/24/2021, 11:45:57 PM x1 
-
-Hello world
-··························································································
-[ HELLO ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM x1 
-
-This is an error message
-··························································································
-``` 
-
-Note the "Hello" namespace on the log header. Every message logged with the namespaced `log()` function will be prefixed with `HELLO`.
-
-### Defining namespace on options:
-
-You can also pass the namespace by defining the `prefix` option:
-
-```js
-const logger = require('logflake');
-const log = logger({ prefix: 'Hello' }); // "HELLO" will be the Namespace
-
-log('Hello world');
-log('error', 'This is an error message');
-```
-
-### Namespace shorthand
-
-If you wont use any other option, and you are using CJS, you can use a shorthand and pass the namespace directly like this:
-
-```js
-const log = require('logflake')('Namespace');
 ```
 
 # Logger Options
@@ -288,6 +246,58 @@ log('info', 'This is an example');
 
 Obs 1. You can check all the `format` available options here: https://nodejs.org/api/util.html#util_util_inspect_object_options  
 Obs 2. Every `log()` function call is internally marked with a unique hash, so we can count how many times it was called, for example. 
+
+# Namespaces (Prefix)
+
+For every `log` function instance you can have a `namespace`. This is simply a `prefix` showed on the console message header.
+To change the console namespace (prefix) you can pass a string when creating the `log()` function, or pass it as an option.
+
+### Using namespaces:
+
+You can define a namespace directly when creating the `log()` function: 
+
+```js
+const logger = require('logflake');
+const log = logger('Hello');              // HELLO will be the namespace
+
+log('Hello world');                       // HELLO namespaced log
+log('error', 'This is an error message'); // HELLO namespaced log
+```
+
+Will output:
+
+```log
+[ HELLO LOG ] linux: username (main: test.js) 7/24/2021, 11:45:57 PM x1 
+
+Hello world
+··························································································
+[ HELLO ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM x1 
+
+This is an error message
+··························································································
+``` 
+
+Note the "Hello" namespace on the log header. Every message logged with the namespaced `log()` function will be prefixed with `HELLO`.
+
+### Defining the `namespace` as an option:
+
+You can also pass the namespace by defining the `prefix` option:
+
+```js
+const logger = require('logflake');
+const log = logger({ prefix: 'Hello' });  // "HELLO" will be the Namespace
+
+log('Hello world');                       // HELLO namespaced log
+log('error', 'This is an error message'); // HELLO namespaced log
+```
+
+### Namespace shorthand
+
+If you wont use any other option, and you are using CJS, you can use a shorthand and pass the namespace directly like this:
+
+```js
+const log = require('logflake')('Namespace');
+```
 
 # Advanced usage
 
@@ -456,6 +466,10 @@ if (anotherErrorCheck) {
   logError.fire('warn'); // log WARN "Generic message" x1
 }
 ```
+
+# Events
+
+Under construction
 
 # About
 

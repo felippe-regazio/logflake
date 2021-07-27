@@ -22,6 +22,7 @@ const defaults: Options = {
   logDir: '',
   format: {},
   linebreak: false,
+  onLog: () => {},
 };
 
 /**
