@@ -3,19 +3,21 @@
 LogFlake is a NodeJS console logger with superpowers. It has the same API as the usual `Console` but with beautified output, header with timestamp and useful information, trackability and a toolset for better control you application log messages.
 
 ```js
-/**
- * Here's an example, this will run a beautified console error message, 
- * and automatically save the output on a log file organized by date.
- * You could also tell the logger to save all messages automatically,
- * for example. But in our case, we decided so save only this error:
- */
 const logger = require('logflake');
 const log = logger({ logDir: './logs' });
 
+log('Hello world');
+
+log('Wellcome %s', 'dev');
+
+log('warn', 'Oh no, this is a waning');
+
+// save this output to a logfile at ./logs. you can also choose to save
+// all the logs automatically, keep reading the docs to know how
 log('error', 'Oh no, an error has occurred!').save();
 ``` 
 
-Output:
+Console message output example:
 
 ```
 [ CONSOLE ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM x1 
