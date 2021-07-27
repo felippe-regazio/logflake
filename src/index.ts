@@ -83,8 +83,11 @@ module.exports = (options: Options = defaults): Function => {
     if (!options.alwaysQuiet && level !== 'quiet') {
       _output.printf(level, args, track.hash);
     }
+
     
     const _chain = chain(level, args, track.hash);
+    _chain.get((...args: any) => options.onLog(...args));
+    
     return options.alwaysSave ? _chain.save({ force: true }) : _chain;
   }  
 
@@ -135,7 +138,10 @@ module.exports = (options: Options = defaults): Function => {
       },
 
       get: (cb: Function, colors: boolean = false) => {
-        cb && cb(level, _output.getOutput(level, argc, hash, colors));
+        const output: string = _output.getOutput(level, argc, hash, colors);
+        const trace: string = new Error().stack.replace('Error\n', '');
+
+        cb && cb(output, level, hash, trace);
 
         return keepChain();
       },

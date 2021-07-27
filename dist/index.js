@@ -42,6 +42,7 @@ var defaults = {
     logDir: '',
     format: {},
     linebreak: false,
+    onLog: function () { },
 };
 module.exports = function (options) {
     if (options === void 0) { options = defaults; }
@@ -68,14 +69,23 @@ module.exports = function (options) {
             _output.printf(level, args, track.hash);
         }
         var _chain = chain(level, args, track.hash);
-        return options.alwaysSave ? _chain.save() : _chain;
+        _chain.get(function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            return options.onLog.apply(options, args);
+        });
+        return options.alwaysSave ? _chain.save({ force: true }) : _chain;
     }
     function chain(level, argc, hash) {
         var chalk = _helpers.getChalk();
         var keepChain = function () { return chain(level, argc, hash); };
         return {
-            save: function () {
-                options.logDir ?
+            save: function (saveOpts) {
+                if (saveOpts === void 0) { saveOpts = {}; }
+                var mustSave = !options.alwaysSave || (options.alwaysSave && saveOpts.force);
+                options.logDir && mustSave ?
                     _output.save(path_1.default.resolve(options.logDir), level, argc, hash) :
                     console.trace(chalk.yellow('(!) Could not save the log. The "logDir" option is missing.'));
                 return keepChain();
@@ -98,7 +108,9 @@ module.exports = function (options) {
             },
             get: function (cb, colors) {
                 if (colors === void 0) { colors = false; }
-                cb && cb(level, _output.getOutput(level, argc, hash, colors));
+                var output = _output.getOutput(level, argc, hash, colors);
+                var trace = new Error().stack.replace('Error\n', '');
+                cb && cb(output, level, hash, trace);
                 return keepChain();
             },
             fire: function (_level) {

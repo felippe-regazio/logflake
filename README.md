@@ -161,7 +161,7 @@ const error = new Error('Unexpected error');
 log('error', 'An unexpected error has occurred: ', error);
 ``` 
 
-### Examples
+### Common Log() Examples
 
 Common Logging:
 
@@ -243,6 +243,7 @@ log('info', 'This is an example');
 | logDir | Directory where the logs must saved. They are automatically named | '' |
 | format | Any valid option of the node `util.formatWithOptions()` function | {} |
 | linebreak | When true, adds a linebreak at the end of each log message | false |
+| onLog | Event triggered everytime a log is fired with the current function (see `Events` on this doc) |
 
 Obs 1. You can check all the `format` available options here: https://nodejs.org/api/util.html#util_util_inspect_object_options  
 Obs 2. Every `log()` function call is internally marked with a unique hash, so we can count how many times it was called, for example. 
@@ -422,19 +423,33 @@ for(let i = 0; i < 1000; i++) {
 ## get
 
 ```
-get(callback: Function): chain  
+get(callback: Function, colors: boolean = false): chain  
 ```
 
-Gets the current log function output. This is useful if you want to send you log output to other destinations as a database, slack, telegram, etc. This function accepts a callback that returns the level and the output:
+Gets the current log output and a bunch of other useful information. This is handy when you want to send your log output/information to other destinations as a database, slack, telegram, etc.  
 
 ```js
-log('error', 'Example').get((level, output) => {
-  // level = 'ERROR' // output = The log output
-  // do whatever you want with level and output
+log('error', 'Example').get((output, level, hash, trace) => {
+  // do whatever you want with the params
 });
 ```
 
-For the example above, the level will be `ERROR`, and the output will be the complete log output as string:
+This function accepts a callback that returns the log `output, level, hash and trace`. For the example above, the output will be the complete log output as string, the level will be `ERROR`, a unique hash and a trace will also be generated for that function. If this very same function has been called 1000 times, the hash will be the same since is a hash per function. Your callback will have this signature:
+
+```
+cb(output: string, level: string, hash: string, trace: string): unknown
+```
+
+The params received are:
+
+| param | description |
+|--|--|--|
+| output | the log output as string, with the header, exactly as showed on the console (std) |
+| level | the log level (log, info, error, warn, trace, quiet) |
+| hash | a unique identifier for that log call (the same log call returns the same unique hash) |
+| trace | a stack trace of the log |
+
+The output level for the example would be `ERROR`, and the output would be:
 
 ``` 
 [ CONSOLE ERROR ] linux: username (main: test.js) 7/26/2021, 9:42:49 PM x1 
@@ -442,6 +457,8 @@ For the example above, the level will be `ERROR`, and the output will be the com
 Example
 ··························································································
 ```
+
+This function accepts a second boolean parameter which gets the output with colors notations. Default is false.
 
 ## fire
 
@@ -479,7 +496,28 @@ if (anotherErrorCheck) {
 
 # Events
 
-Under construction
+The `onLog` event is available as a Logger Option and accepts a callback that is triggered everytime a log output occurs. The params passed to the callback are `output, level, hash, trace`. It works similar to the `get` method, but its automatically triggered for all log outputs.  
+
+```js
+const logger = require('logflake');
+
+const log = logger({
+  onLog: (output, level, hash, trace) => {
+    // do whatever you want with the params
+  }
+});
+
+log('Hello world');
+log('error', 'Oh no, an error!');
+```
+
+On the example above, the `onLog` function callback will be triggered 2 times, passing the `output, level, hash and trace` of the log functions which triggered the callback. Everytime a log is generated on this instance (function), the `onLog` callback will be triggered. Your callback will have this signature:
+
+```
+cb(output: string, level: string, hash: string, trace: string): unknown
+```
+
+This is very very handy if you want to create plugins or new transporters for LogFlack. You can use it to capture the logs and send to a database, slack, telegram or whatever you want.
 
 # About
 

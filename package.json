@@ -4,9 +4,9 @@
   "description": "Better console messages for NodeJS",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
     "dev": "tsc --watch",
-    "test": "jest ./test"
+    "test": "jest ./test",
+    "build": "rm -rf ./dist && tsc"
   },
   "author": "Felippe Regazio",
   "license": "MIT",
