@@ -463,7 +463,7 @@ This function accepts a second boolean parameter which gets the output with colo
 ## fire
 
 ```
-fire(level?: string): Log
+fire(level?: string): chain
 ```
 
 When using a reference, you can use `fire` to trigger the referenced log. When using `fire`, you also gets a new log function. The `level` parameter on this function overrides the original log level. For example:
