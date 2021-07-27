@@ -49,7 +49,7 @@ yard add logflake
 First import LogFlake and create a logger
 
 ```js
-const logger = require('logflake);
+const logger = require('logflake');
 const log = logger();
 ```
 
