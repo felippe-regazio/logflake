@@ -64,9 +64,10 @@ var Helpers = (function () {
             .join('-');
     };
     Helpers.prototype.noopChain = function (chain) {
+        var _this = this;
         var noop = chain();
         Object.keys(noop).forEach(function (fn) {
-            noop[fn] = function () { return noop(); };
+            noop[fn] = function () { return _this.noopChain; };
         });
         return noop;
     };

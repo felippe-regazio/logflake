@@ -76,7 +76,7 @@ export default class Helpers {
     const noop = chain();
 
     Object.keys(noop).forEach(fn => {
-      noop[fn] = () => noop();
+      noop[fn] = () => this.noopChain;
     });
 
     return noop;
