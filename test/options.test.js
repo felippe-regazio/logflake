@@ -11,61 +11,50 @@ beforeEach(() => {
   mockConsole.mockReset();
 });
 
-describe('Test instantiation', () => {
-  it('Log header basic namespace changing', () => {
-    const log = logger('test');
-
-    log('Hello world');
+describe('Test log options', () => {
+  it('Check {prefix} option', () => {
+    let log = null;
+    let output = '';
     
-    const header = mockConsole.mock.calls[0][0];
-    expect(header.includes('[ TEST LOG ]')).toBe(true);
+    log = logger();
+    log('This is a test').get(_output => (output = _output));
+    expect(output.includes('[ CONSOLE LOG ]')).toBe(true);
+
+    log = logger('test');
+    log('This is a test').get(_output => (output = _output));
+    expect(output.includes('[ TEST LOG ]')).toBe(true);
+
+    log = logger({ prefix: 'test' });
+    log('This is a test').get(_output => (output = _output));
+    expect(output.includes('[ TEST LOG ]')).toBe(true);
   });
 
-  it('Log header namespace changing by options', () => {
-    const log = logger({ prefix: 'test' });
-
-    log('Hello world');
+  it('Check {header} option', () => {
+    let log = null;
+    let output = '';
     
-    const header = mockConsole.mock.calls[0][0];
-    expect(header.includes('[ TEST LOG ]')).toBe(true);
+    log = logger({ header: false });
+    log('This is a test').get(_output => (output = _output));
+    expect(output.includes('[ CONSOLE LOG ]')).toBe(false);
+  }); 
+
+  it('Check {disabled} option', () => {
+    let log = null;
+    let output = '';
+    
+    log = logger({ disabled: true });
+    log('This is a test').get(_output => (output = _output));
+
+    expect(global.console.log).not.toHaveBeenCalled();
+    expect(output.includes('[ CONSOLE LOG ]')).toBe(false);
   });
 
-  it('Use lines option', () => {
-    const log = logger({ lines: true });
-
-    log('Hello world');
+  it('Check {seamless} option', () => {
+    let log = null;
+    let output = '';
     
-    const call = mockConsole.mock.calls[0];
-    const lines = [ call[0], call[call.length - 1] ];
-
-    lines.forEach(line => {
-      expect(line.includes('·····')).toBe(true);    
-    });
-  });
-
-  it('Use lines option with custom char', () => {
-    const log = logger({ lines: true, linesChar: '*' });
-
-    log('Hello world');
-    
-    const call = mockConsole.mock.calls[0];
-    const lines = [ call[0], call[call.length - 1] ];
-
-    lines.forEach(line => {
-      expect(line.includes('*****')).toBe(true);    
-    });
-  });
-
-  it('Checks disabled and always quiet option', () => {
-    const logDisabled = logger({ disabled: true });
-    const logAlwaysQuiet = logger({ alwaysQuiet: true });
-
-    [ logDisabled, logAlwaysQuiet ].forEach(log => {
-      [ 'log', 'info', 'warn', 'error', 'trace' ].forEach(level => {
-        log(level, 'Hello world');
-    
-        expect(global.console[level]).not.toHaveBeenCalled();
-      });
-    });
-  });
+    log = logger({ seamless: true });
+    log('This is a test').get(_output => (output = _output));
+    expect(output.includes('[ CONSOLE LOG ]')).toBe(false);
+  });  
 });
