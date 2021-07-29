@@ -55,7 +55,7 @@ const log = logger();
 log('Hello world!');
 ```
 
-Or if you prefer EJS
+Or if you prefer ESM
 
 ```js
 import logger from 'logflake';

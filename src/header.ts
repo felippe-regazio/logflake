@@ -11,10 +11,12 @@ export default class Header {
   }
 
   create(level: string|null = 'log', hash: string, colors: boolean = this.options.colors): string {
+    if (level === 'quiet') level = 'log';
+    
     const _chalk  = this.helpers.getChalk(colors);
     const _track  = tracker.read(hash);
     const _levels = this.helpers.getLogLevels();
-    
+
     const color: string     = _levels[level] || 'blue';
     const headline: string  = `[ ${this.options.prefix.toUpperCase()} ${level.toUpperCase()} ]`;
     const platform: string  = this.options.platform ? this.helpers.getPlatform() : '';

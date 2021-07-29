@@ -23,30 +23,10 @@ var path_1 = __importDefault(require("path"));
 var tracker_1 = __importDefault(require("./tracker"));
 var helpers_1 = __importDefault(require("./helpers"));
 var output_1 = __importDefault(require("./output"));
-var defaults = {
-    prefix: 'console',
-    colors: true,
-    header: true,
-    lines: true,
-    linesChar: '·',
-    dateLocale: 'en',
-    username: true,
-    datetime: true,
-    platform: true,
-    mainModule: true,
-    disabled: false,
-    seamless: false,
-    showLogHash: false,
-    alwaysSave: false,
-    alwaysQuiet: false,
-    logDir: '',
-    format: {},
-    linebreak: false,
-    onLog: function () { },
-};
+var defaults_1 = __importDefault(require("./defaults"));
 module.exports = function (options) {
-    if (options === void 0) { options = defaults; }
-    options = typeof options === 'string' ? __assign(__assign({}, defaults), { prefix: options }) : __assign(__assign({}, defaults), options);
+    if (options === void 0) { options = defaults_1.default; }
+    options = typeof options === 'string' ? __assign(__assign({}, defaults_1.default), { prefix: options }) : __assign(__assign({}, defaults_1.default), options);
     var _output = new output_1.default(options);
     var _helpers = new helpers_1.default(options);
     function log(level) {

@@ -2,28 +2,7 @@ import path from 'path';
 import tracker from './tracker';
 import Helpers from './helpers';
 import Output from './output';
-
-const defaults: Options = {
-  prefix: 'console',
-  colors: true,
-  header: true,
-  lines: true,
-  linesChar: '·',
-  dateLocale: 'en',
-  username: true,
-  datetime: true,
-  platform: true,
-  mainModule: true,
-  disabled: false,
-  seamless: false,
-  showLogHash: false,
-  alwaysSave: false,
-  alwaysQuiet: false,
-  logDir: '',
-  format: {},
-  linebreak: false,
-  onLog: () => {},
-};
+import defaults from './defaults';
 
 /**
  * This factory returns a "log" function which has the same API than a Console. 

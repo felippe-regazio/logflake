@@ -13,6 +13,8 @@ var Header = (function () {
     Header.prototype.create = function (level, hash, colors) {
         if (level === void 0) { level = 'log'; }
         if (colors === void 0) { colors = this.options.colors; }
+        if (level === 'quiet')
+            level = 'log';
         var _chalk = this.helpers.getChalk(colors);
         var _track = tracker_1.default.read(hash);
         var _levels = this.helpers.getLogLevels();
