@@ -1,5 +1,6 @@
-const path = require('path');
-const util = require('util');
+import path from 'path';
+import util from 'util';
+
 const mockConsole = jest.fn();
 
 beforeAll(() => {
@@ -29,7 +30,8 @@ describe('Assert that common executions wont fail', () => {
         'trace'        
       ].forEach(_level => {
         let cbRunned = false;
-        let lastHash = lastTrace = '';
+        let lastHash = ''; 
+        let lastTrace = '';
 
         log(_level, testword).get((output, level, hash, trace) => {
           cbRunned = true;
@@ -76,7 +78,8 @@ describe('Assert that common executions wont fail', () => {
       
       samples.forEach(data => {
         let cbRunned = false;        
-        let lastHash = lastTrace = '';
+        let lastHash = '';
+        let lastTrace = '';
         let strSample = util.format(data);
 
         log(testword, data).get((output, level, hash, trace) => {
@@ -94,7 +97,7 @@ describe('Assert that common executions wont fail', () => {
           lastHash && expect(lastHash).toEqual(hash);
           lastTrace && expect(lastTrace).toEqual(trace);
 
-          _allok = true;
+          cbRunned = true;
         });
         
         if (!cbRunned) {
@@ -139,7 +142,8 @@ describe('Assert that common executions wont fail', () => {
       ].forEach(_level => {
         samples.forEach(data => {
           let cbRunned = false;
-          let lastHash = lastTrace = '';
+          let lastHash =  '';
+          let lastTrace = '';
           let strSample = util.format(data);
   
           log(_level, '%s', testword, data, 'Yeah!').get((output, level, hash, trace) => {
@@ -181,19 +185,14 @@ describe('Assert that common executions wont fail', () => {
 
     log('quiet', '%s', testword, 'Yeah!').get((output, level, hash, trace) => {
       cbRunned = true;
-      lastHash = hash;
-      lastTrace = trace;
 
       expect(global.console.log).not.toHaveBeenCalled();
       expect('quiet').toEqual(level);
       expect(output.includes(testword)).toBe(true);
-      expect(output.includes(level.toUpperCase())).toBe(true);
+      expect(output.includes('LOG')).toBe(true);
       expect(trace.includes(path.basename(__filename))).toBe(true);
       expect(output.includes('Yeah!')).toBe(true);
       expect(output.includes('%s')).toBe(false);
-    
-      lastHash && expect(lastHash).toEqual(hash);
-      lastTrace && expect(lastTrace).toEqual(trace);
     });
 
     if (!cbRunned) {
