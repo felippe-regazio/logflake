@@ -528,4 +528,4 @@ This is very very handy if you want to create plugins or new transporters for `L
 
 # About
 
-LogFlake is a `Free and Open Source` package created by Felippe Regazio. Version: 1.0.0.
+LogFlake is a `Free and Open Source` package created by Felippe Regazio.
