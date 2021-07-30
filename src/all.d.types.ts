@@ -43,3 +43,10 @@ type FnTrack = {
 type SaveOptions = {
   force?: boolean;
 }
+
+type LogInfo = {
+  hash?: string;
+  trace?: string;
+  level?: string;
+  date?: Date;
+}

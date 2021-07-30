@@ -118,8 +118,17 @@ module.exports = (options: Options = defaults): Function => {
       get: (cb: Function, colors: boolean = false) => {
         const output: string = _output.getOutput(level, argc, hash, colors);
         const trace: string = new Error().stack.replace('Error\n', '');
+        const date: Date = new Date();
+        const track: FnTrack = tracker.read(hash);
 
-        cb && cb(output, level, hash, trace);
+        cb && cb(output, {
+          hash,
+          trace,
+          level,
+          date,
+          dateUTC: date.toISOString(),
+          callCount: track.callCount,
+        });
 
         return keepChain();
       },

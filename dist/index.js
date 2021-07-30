@@ -90,7 +90,16 @@ module.exports = function (options) {
                 if (colors === void 0) { colors = false; }
                 var output = _output.getOutput(level, argc, hash, colors);
                 var trace = new Error().stack.replace('Error\n', '');
-                cb && cb(output, level, hash, trace);
+                var date = new Date();
+                var track = tracker_1.default.read(hash);
+                cb && cb(output, {
+                    hash: hash,
+                    trace: trace,
+                    level: level,
+                    date: date,
+                    dateUTC: date.toISOString(),
+                    callCount: track.callCount,
+                });
                 return keepChain();
             },
             fire: function (_level) {
