@@ -24,7 +24,7 @@ log('error', 'Oh no, an error has occurred!').save();
 Console message output example:
 
 ```
-[ CONSOLE ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM x1 
+[ CONSOLE ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM
 
 This is an error message
 ··························································································
@@ -83,7 +83,7 @@ log('Hello World');
 This will output:
 
 ```log
-[ CONSOLE LOG ] linux: username (main: test.js) 7/24/2021, 11:34:14 PM x1 
+[ CONSOLE LOG ] linux: username (main: test.js) 7/24/2021, 11:34:14 PM 
 
 Hello world
 ··························································································
@@ -92,8 +92,8 @@ Hello world
 You must have noticed the header with useful information. By default, they are:
 
 ```
-[ CONSOLE LOG ] linux: username (main: test.js) 7/24/2021, 11:34:14 PM x1 
-1*              2*     3*       4*              5*                     6*
+[ CONSOLE LOG ] linux: username (main: test.js) 7/24/2021, 11:34:14 PM 
+1*              2*     3*       4*              5*
 ``` 
 
 1. This is the header prefix or namespace, setted as "CONSOLE" by default. It can be changed by you. The last term is the log level (`LOG` by default. The header prefixes are colorized in according to the log level: `{ log: 'blue', info: 'cyan', warn: 'yellow', error: 'red', trace: 'magenta', quiet: 'black' }`.
@@ -106,9 +106,7 @@ You must have noticed the header with useful information. By default, they are:
 
 5. The datetime notation (in `en` by default). You can change the locale on the options.
 
-6. How many times this same log() function has been called at the current runtime/process.
-
-You can disable or enable the items `2, 3, 4, 5, 6` on the `LogFlake` options. 
+You can disable or enable the items `2, 3, 4, 5` on the `LogFlake` options. 
 
 ### The log() function
 
@@ -150,7 +148,7 @@ log('error', 'This is an error message');
 This will output:
 
 ```log
-[ CONSOLE ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM x1 
+[ CONSOLE ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM 
 
 This is an error message
 ··························································································
@@ -239,6 +237,7 @@ log('info', 'This is an example');
 | datetime | Shows a datetime stamp on the log header | true |
 | platform | Shows the current platform on the log header | true |
 | mainModule | Shows the main module on the log header | true |
+| callCount | Shows on header how many times the same log() function has been called at the current runtime/process | false |
 | disabled | When true, disables all the logs operations on the current instance | false |
 | seamless | Dont beautify anything, no further info. Use the common console output | false |
 | showLogHash | If true, shows a unique log hash on header of each log message | false |
@@ -273,11 +272,11 @@ log('error', 'This is an error message'); // HELLO namespaced log
 Will output:
 
 ```log
-[ HELLO LOG ] linux: username (main: test.js) 7/24/2021, 11:45:57 PM x1 
+[ HELLO LOG ] linux: username (main: test.js) 7/24/2021, 11:45:57 PM 
 
 Hello world
 ··························································································
-[ HELLO ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM x1 
+[ HELLO ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM 
 
 This is an error message
 ··························································································
@@ -459,7 +458,7 @@ The callback params are:
 | trace | a stack trace of the log call |
 
 ``` 
-[ CONSOLE ERROR ] linux: username (main: test.js) 7/26/2021, 9:42:49 PM x1 
+[ CONSOLE ERROR ] linux: username (main: test.js) 7/26/2021, 9:42:49 PM 
 
 Example
 ··························································································
