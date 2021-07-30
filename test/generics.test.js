@@ -33,19 +33,19 @@ describe('Assert that common executions wont fail', () => {
         let lastHash = ''; 
         let lastTrace = '';
 
-        log(_level, testword).get((output, level, hash, trace) => {
+        log(_level, testword).get((output, info) => {
           cbRunned = true;
-          lastHash = hash;
-          lastTrace = trace;
+          lastHash = info.hash;
+          lastTrace = info.trace;
 
           expect(global.console.log).toHaveBeenCalled();
           expect(output.includes(testword)).toBe(true);
-          expect(output.includes(level.toUpperCase())).toBe(true);
-          expect(_level).toEqual(level);
-          expect(trace.includes(path.basename(__filename))).toBe(true);
+          expect(output.includes(info.level.toUpperCase())).toBe(true);
+          expect(_level).toEqual(info.level);
+          expect(info.trace.includes(path.basename(__filename))).toBe(true);
         
-          lastHash && expect(lastHash).toEqual(hash);
-          lastTrace && expect(lastTrace).toEqual(trace);
+          lastHash && expect(lastHash).toEqual(info.hash);
+          lastTrace && expect(lastTrace).toEqual(info.trace);
         });
 
         if (!cbRunned) {
@@ -82,20 +82,20 @@ describe('Assert that common executions wont fail', () => {
         let lastTrace = '';
         let strSample = util.format(data);
 
-        log(testword, data).get((output, level, hash, trace) => {
+        log(testword, data).get((output, info) => {
           cbRunned = true;
-          lastHash = hash;
-          lastTrace = trace;
+          lastHash = info.hash;
+          lastTrace = info.trace;
 
           expect(global.console.log).toHaveBeenCalled();
           expect(output.includes(testword)).toBe(true);
-          expect(output.includes(level.toUpperCase())).toBe(true);
-          expect(level).toBe('log');
-          expect(trace.includes(path.basename(__filename))).toBe(true);
+          expect(output.includes(info.level.toUpperCase())).toBe(true);
+          expect(info.level).toBe('log');
+          expect(info.trace.includes(path.basename(__filename))).toBe(true);
           expect(output.includes(strSample)).toBe(true);
 
-          lastHash && expect(lastHash).toEqual(hash);
-          lastTrace && expect(lastTrace).toEqual(trace);
+          lastHash && expect(lastHash).toEqual(info.hash);
+          lastTrace && expect(lastTrace).toEqual(info.trace);
 
           cbRunned = true;
         });
@@ -146,22 +146,22 @@ describe('Assert that common executions wont fail', () => {
           let lastTrace = '';
           let strSample = util.format(data);
   
-          log(_level, '%s', testword, data, 'Yeah!').get((output, level, hash, trace) => {
+          log(_level, '%s', testword, data, 'Yeah!').get((output, info) => {
             cbRunned = true;
-            lastHash = hash;
-            lastTrace = trace;
+            lastHash = info.hash;
+            lastTrace = info.trace;
   
             expect(global.console.log).toHaveBeenCalled();
             expect(output.includes(testword)).toBe(true);
-            expect(output.includes(level.toUpperCase())).toBe(true);
-            expect(_level).toEqual(level);
-            expect(trace.includes(path.basename(__filename))).toBe(true);
+            expect(output.includes(info.level.toUpperCase())).toBe(true);
+            expect(_level).toEqual(info.level);
+            expect(info.trace.includes(path.basename(__filename))).toBe(true);
             expect(output.includes(strSample)).toBe(true);
             expect(output.includes('Yeah!')).toBe(true);
             expect(output.includes('%s')).toBe(false);
           
-            lastHash && expect(lastHash).toEqual(hash);
-            lastTrace && expect(lastTrace).toEqual(trace);
+            lastHash && expect(lastHash).toEqual(info.hash);
+            lastTrace && expect(lastTrace).toEqual(info.trace);
           });
 
           if (!cbRunned) {
@@ -183,14 +183,14 @@ describe('Assert that common executions wont fail', () => {
 
     let cbRunned = false;
 
-    log('quiet', '%s', testword, 'Yeah!').get((output, level, hash, trace) => {
+    log('quiet', '%s', testword, 'Yeah!').get((output, info) => {
       cbRunned = true;
 
       expect(global.console.log).not.toHaveBeenCalled();
-      expect('quiet').toEqual(level);
+      expect('quiet').toEqual(info.level);
       expect(output.includes(testword)).toBe(true);
       expect(output.includes('LOG')).toBe(true);
-      expect(trace.includes(path.basename(__filename))).toBe(true);
+      expect(info.trace.includes(path.basename(__filename))).toBe(true);
       expect(output.includes('Yeah!')).toBe(true);
       expect(output.includes('%s')).toBe(false);
     });

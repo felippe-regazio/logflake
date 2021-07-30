@@ -432,30 +432,31 @@ get(callback: Function, colors: boolean = false): chain
 
 Gets the current log output and a bunch of other useful information. This is handy when you want to send an specific log output/information to other destinations as a database, slack, telegram, etc.  
 
+
+This function accepts a callback that returns the log `output` and a `info` object. Also accepts a second boolean parameter which gets the `output` with colors; default is `false`. Note: if this very same function has been called 1000 times, the hash will be the same since is a hash per function. 
+
 ```js
-log('error', 'Example').get((output, level, hash, trace) => {
+log('error', 'Example').get((output, info) => {
   // do whatever you want with the params
-  // output = complete log output as string
-  // level  = ERROR
-  // hash   = example: 912ec803b2ce49e4a541068d495ab570
-  // trace  = a log trace of this log call
 });
 ```
 
-This function accepts a callback that returns the log `output, level, hash and trace`. Note: if this very same function has been called 1000 times, the hash will be the same since is a hash per function. Your callback will have this signature:
+### Callback
+
+The callback has the following signature:
 
 ```
-cb(output: string, level: string, hash: string, trace: string): unknown
+cb(output: string, info: object): unknown
 ```
-
-The callback params are:
 
 | param | description |
 |--|--|--|
 | output | the log output as string, with the header, exactly as showed on the console (std) |
-| level | the log level (LOG, INFO, ERROR, WARN, TRACE, QUIET) |
-| hash | a unique identifier for that log call (the same log call returns the same unique hash) |
-| trace | a stack trace of the log call |
+| info | an object containing useful information about the triggered log |
+
+### Output
+
+For the given example, the `output` would be the following string:
 
 ``` 
 [ CONSOLE ERROR ] linux: username (main: test.js) 7/26/2021, 9:42:49 PM 
@@ -464,7 +465,20 @@ Example
 ··························································································
 ```
 
-This function accepts a second boolean parameter which gets the output with color notations. Default is false.
+### Info
+
+The `info` object returns the following properties:
+
+```log
+{
+  hash       | the triggered function hash
+  trace      | a stack trace of the triggered log
+  level      | the log level that has been called
+  date       | the current date of the log call
+  dateUTC    | the current UTC date of the log call
+  callCount  | number of times that this same log was triggered
+}
+```
 
 ## fire
 
@@ -502,13 +516,13 @@ if (anotherErrorCheck) {
 
 # Events
 
-The `onLog` event is available as a Logger Option and accepts a callback that is triggered everytime a log output occurs. The params passed to the callback are `output, level, hash, trace`. It works similar to the `get` method, but its automatically triggered for all log outputs.  
+The `onLog` event is available as a Logger Option and accepts a callback that is triggered everytime a log output occurs. The params passed to the callback are `output` and `info` containing useful information about the triggered log. It works very similar to the `get` method, but its automatically triggered for all log outputs.  
 
 ```js
 const logger = require('logflake');
 
 const log = logger({
-  onLog: (output, level, hash, trace) => {
+  onLog: (output, info) => {
     // do whatever you want with the params
   }
 });
@@ -517,10 +531,10 @@ log('Hello world');
 log('error', 'Oh no, an error!');
 ```
 
-On the example above, the `onLog` function callback will be triggered 2 times, passing the `output, level, hash and trace` of the original log functions. Everytime a log is generated with this instance (function), the `onLog` callback will be triggered. Your callback will have this signature:
+On the example above, the `onLog` function callback will be triggered 2 times, passing the `output` containing the log contents, and the `info` with information about the log call. Everytime a log is generated with this instance (function), the `onLog` callback will be triggered. Your callback will have this signature:
 
 ```
-cb(output: string, level: string, hash: string, trace: string): unknown
+cb(output: string, info: object): unknown
 ```
 
 This is very very handy if you want to create plugins or new transporters for `LogFlake`. You can use it to capture the logs and send to a database, slack, telegram or whatever you want.

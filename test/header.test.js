@@ -47,8 +47,8 @@ describe('Test console header output', () => {
   it('Check the default header output', () => {
     const log = logger();
 
-    log('quiet', 'Hakuna Matata').get((output, level, hash) => {
-      const _header = new Header(defaults).create('log', hash, true);
+    log('quiet', 'Hakuna Matata').get((output, info) => {
+      const _header = new Header(defaults).create('log', info.hash, true);
       const _helpers = new helpers(defaults);
       const _date = _helpers.getDateTime() ? _helpers.getDateTime().split(', ')[0] : '';
 
@@ -98,8 +98,8 @@ describe('Test console header output', () => {
   it('Check {showLogHash, callCount} options', () => {
     const log = logger({ showLogHash: true, callCount: true });
 
-    log('quiet', 'Hakuna Matata').get((output, level, hash) => {
-      expect(output.includes(hash)).toBe(true);
+    log('quiet', 'Hakuna Matata').get((output, info) => {
+      expect(output.includes(info.hash)).toBe(true);
       expect(output.includes('x1')).toBe(true);
     }, true);
   });
