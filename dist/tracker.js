@@ -22,7 +22,7 @@ var FnTracker = (function () {
     class_1.prototype.fnTrack = function () {
         var hash = this.fnCreateHash();
         var fnTrack = this.fnPool[hash] || {};
-        var callCount = fnTrack.callCount ? ++fnTrack.callCount : 1;
+        var callCount = this.callCountInc(fnTrack.callCount || 0);
         if (!fnTrack || fnTrack.fnDisabled !== true) {
             Object.assign(fnTrack, {
                 hash: hash,
@@ -39,6 +39,9 @@ var FnTracker = (function () {
         var trace = new Error().stack;
         Error.stackTraceLimit = _stl;
         return md5_1.default(trace);
+    };
+    class_1.prototype.callCountInc = function (callCount) {
+        return callCount < Number.MAX_SAFE_INTEGER ? ++callCount : callCount;
     };
     class_1.prototype.mutateFnTrack = function (hash, overrides) {
         var track = this.fnPool[hash];

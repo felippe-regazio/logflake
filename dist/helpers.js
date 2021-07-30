@@ -43,6 +43,13 @@ var Helpers = (function () {
         var separator = this.options.username ? ':' : '';
         return platform ? " " + platform + separator : '';
     };
+    Helpers.prototype.getCallCountStr = function (track) {
+        var callCount = ' x' + (track.callCount || '(?)');
+        if (track.callCount === Number.MAX_SAFE_INTEGER) {
+            callCount += ' (+)';
+        }
+        return callCount;
+    };
     Helpers.prototype.line = function (colors) {
         if (colors === void 0) { colors = this.options.colors; }
         var size;

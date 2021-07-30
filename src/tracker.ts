@@ -10,7 +10,7 @@ const FnTracker = class {
   fnTrack(): FnTrack {
     const hash: string = this.fnCreateHash();
     const fnTrack: FnTrack = this.fnPool[hash] || {};
-    const callCount: number = fnTrack.callCount ? ++fnTrack.callCount : 1;
+    const callCount = this.callCountInc(fnTrack.callCount || 0);
 
     if (!fnTrack || fnTrack.fnDisabled !== true) {
       Object.assign(fnTrack, <FnTrack>{
@@ -33,6 +33,10 @@ const FnTracker = class {
     Error.stackTraceLimit = _stl;
 
     return md5(trace);
+  }
+
+  callCountInc(callCount: number): number {
+    return callCount < Number.MAX_SAFE_INTEGER ? ++callCount : callCount;
   }
 
   mutateFnTrack(hash: string, overrides: FnTrack): FnTrack {

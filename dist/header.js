@@ -24,7 +24,7 @@ var Header = (function () {
         var username = this.options.username ? this.helpers.getUsername() : '';
         var main = this.options.mainModule ? this.helpers.getMain() : '';
         var date = this.options.datetime ? this.helpers.getDateTime() : '';
-        var callCount = this.options.callCount ? _chalk[color](" x" + (_track.callCount || '(?)')) : '';
+        var callCount = this.options.callCount ? _chalk[color](this.helpers.getCallCountStr(_track)) : '';
         var loghash = this.options.showLogHash ? _chalk.gray(" " + _track.hash) : '';
         var header = _chalk[color].bold(headline)
             + ("" + platform)
@@ -34,6 +34,8 @@ var Header = (function () {
             + ("" + callCount)
             + ("" + loghash);
         return level === 'trace' ? "\n" + header : header;
+    };
+    Header.prototype.getCallCountStr = function () {
     };
     return Header;
 }());

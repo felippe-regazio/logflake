@@ -49,6 +49,16 @@ export default class Helpers {
     return platform ? ` ${platform}${separator}` : '';
   }
 
+  getCallCountStr(track: FnTrack): string {    
+    let callCount = ' x' + (track.callCount || '(?)');
+    
+    if (track.callCount === Number.MAX_SAFE_INTEGER) {
+      callCount += ' (+)';
+    }
+
+    return callCount;
+  }
+
   line(colors: boolean = this.options.colors): string {
     let size: number;
 
