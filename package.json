@@ -3,6 +3,10 @@
   "version": "1.1.2",
   "description": "Better console messages for NodeJS",
   "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/felippe-regazio/logflake"
+  },
   "files": [
     "dist/",
     "README.md"

@@ -221,7 +221,7 @@ const log = logger({
 log('info', 'This is an example');
 ```
 
-## Available Options
+## Options
 
 | Option | Description | Default |
 | --- | --- | --- |
@@ -438,7 +438,7 @@ log('error', 'Example').get((output, info) => {
 
 This function accepts a callback that returns the log `output` and a `info` object. Also accepts a second boolean parameter which gets the `output` with colors; default is `false`. Note: if this very same function has been called 1000 times, the hash will be the same since is a hash per function. 
 
-### Callback
+#### Callback
 
 ```
 cb(output: string, info: object): unknown
@@ -449,7 +449,7 @@ cb(output: string, info: object): unknown
 | output | the log output as string, with the header, exactly as showed on the console (std) |
 | info | an object containing useful information about the triggered log |
 
-### Output
+#### Output
 
 For the given example, the `output` would be the following string:
 
@@ -460,7 +460,7 @@ Example
 ········································································
 ```
 
-### Info
+#### Info
 
 The `info` object returns the following properties:
 
