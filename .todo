@@ -1,0 +1,6 @@
+- registrar data da funcao no track, e nao via header
+- na header pegar a data do track e formatar pro output
+- para get() e onLog() os args devem ser (output '', info {})
+- atualizar a doc e os testes apos essas mudanças
+- colocar o count como opicional
+- testar max integer number em js para o count (utilizar bigInt)
