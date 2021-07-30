@@ -108,7 +108,7 @@ You must have noticed the header with useful information. By default, they are:
 
 You can disable or enable the items `2, 3, 4, 5` on the `LogFlake` options. 
 
-### The log() function
+## The log() function
 
 ```
 log(level?: string, ...arguments: any): Chain
@@ -126,7 +126,7 @@ log('This is an object', example);
 The first argument of the `log()` function can be used to control the Log Level you want to use.
 When you dont specify a level, the common `log` level will be used by default.
 
-### Log Levels
+## Log Levels
 
 The console levels are:
 
@@ -163,7 +163,7 @@ const error = new Error('Unexpected error');
 log('error', 'An unexpected error has occurred: ', error);
 ``` 
 
-### Common Log() Examples
+## Common Log() Examples
 
 ```js
 // common log
@@ -221,7 +221,7 @@ const log = logger({
 log('info', 'This is an example');
 ```
 
-### Available Options
+## Available Options
 
 | Option | Description | Default |
 | --- | --- | --- |
@@ -255,7 +255,7 @@ log('info', 'This is an example');
 For every `log` function instance you can have a `namespace`. This is simply a `prefix` showed on the console message header.
 To change the console namespace (prefix) you can pass a string when creating the `log()` function, or pass it as an option.
 
-### Using namespaces:
+## Using namespaces:
 
 You can define a namespace directly when creating the `log()` function: 
 
@@ -282,7 +282,7 @@ This is an error message
 
 Note the "Hello" namespace on the log header. Every message logged with the namespaced `log()` function will be prefixed with `HELLO`.
 
-### Defining the `namespace` as an option:
+## Defining the `namespace` as an option:
 
 You can also pass the namespace by defining the `prefix` option:
 
@@ -294,7 +294,7 @@ log('Hello world');                       // HELLO namespaced log
 log('error', 'This is an error message'); // HELLO namespaced log
 ```
 
-### Namespace shorthand
+## Namespace shorthand
 
 If you wont use any other option, and you are using CJS, you can use a shorthand and pass the namespace directly like this:
 
@@ -320,7 +320,7 @@ for(let i=0; i<100; i++) {
 
 The log above will be fired only once, even inside a loop, and its output will be save on a file inside the folder `logs`. So, the `log()` chain provides chained methods to help you with things like that. Those are the methods:
 
-### Referencing
+## Referencing
 
 You can create a "reference" to a log function by assigning it to a variable or const:
 
@@ -342,7 +342,7 @@ logError.fire('error').save();
 
 You can see more details about the methods you can use with the log function below.
 
-### Chaining
+## Chaining
 
 Any `log` call has a chain of useful methods. The example below runs only once and saves its output on a local file. See the next section of this documentation to know more about the chained methods.
 
