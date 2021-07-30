@@ -23,7 +23,7 @@ export default class Header {
     const username: string  = this.options.username ? this.helpers.getUsername() : '';
     const main: string      = this.options.mainModule ? this.helpers.getMain() : '';
     const date: string      = this.options.datetime ? this.helpers.getDateTime() : '';
-    const callCount: string = this.options.callcount ? _chalk[color](` x${(_track.callCount || '(?)')}`) : '';
+    const callCount: string = this.options.callCount ? _chalk[color](` x${(_track.callCount || '(?)')}`) : '';
     const loghash: string   = this.options.showLogHash ? _chalk.gray(` ${_track.hash}`) : '';
 
     const header: string = _chalk[color].bold(headline)

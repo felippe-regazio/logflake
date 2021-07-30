@@ -16,7 +16,7 @@ const options: Options = {
   alwaysQuiet: false,
   logDir: '',
   format: {},
-  callcount: false,
+  callCount: false,
   linebreak: false,
   onLog: () => {},
 };

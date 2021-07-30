@@ -57,8 +57,7 @@ describe('Test console header output', () => {
         _helpers.getPlatform(),
         _helpers.getUsername(),
         _helpers.getMain(),
-        _date,
-        'x1'
+        _date
       ].map(item => item);
 
       strCheck.forEach(str => {
@@ -87,6 +86,7 @@ describe('Test console header output', () => {
         _helpers.getPlatform(),
         _helpers.getMain(),
         _date,
+        'x1',
       ].map(item => item);      
 
       strCheck.forEach(str => {
@@ -95,11 +95,12 @@ describe('Test console header output', () => {
     }, true);
   });
 
-  it('Check {showLogHash} option', () => {
-    const log = logger({ showLogHash: true });
+  it('Check {showLogHash, callCount} options', () => {
+    const log = logger({ showLogHash: true, callCount: true });
 
     log('quiet', 'Hakuna Matata').get((output, level, hash) => {
       expect(output.includes(hash)).toBe(true);
+      expect(output.includes('x1')).toBe(true);
     }, true);
   });
 });

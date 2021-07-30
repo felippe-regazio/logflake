@@ -16,7 +16,7 @@ type Options = {
   alwaysQuiet?: boolean;
   logDir?: string;
   format?: object;
-  callcount?: boolean,
+  callCount?: boolean,
   linebreak?: boolean;
   onLog?: Function;
 }

@@ -18,6 +18,7 @@ var options = {
     alwaysQuiet: false,
     logDir: '',
     format: {},
+    callCount: false,
     linebreak: false,
     onLog: function () { },
 };
