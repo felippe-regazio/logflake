@@ -1,6 +1,6 @@
 {
   "name": "logflake",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Better console messages for NodeJS",
   "main": "dist/index.js",
   "files": [
