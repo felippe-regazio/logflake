@@ -27,7 +27,7 @@ Console message output example:
 [ CONSOLE ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM
 
 This is an error message
-··························································································
+········································································
 ``` 
 
 # Installing
@@ -86,7 +86,7 @@ This will output:
 [ CONSOLE LOG ] linux: username (main: test.js) 7/24/2021, 11:34:14 PM 
 
 Hello world
-··························································································
+········································································
 ```
 
 You must have noticed the header with useful information. By default, they are:
@@ -151,7 +151,7 @@ This will output:
 [ CONSOLE ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM 
 
 This is an error message
-··························································································
+········································································
 ```
 
 The usage follows the same usage as a common `console` call:
@@ -164,8 +164,6 @@ log('error', 'An unexpected error has occurred: ', error);
 ``` 
 
 ### Common Log() Examples
-
-Common Logging:
 
 ```js
 // common log
@@ -275,11 +273,11 @@ Will output:
 [ HELLO LOG ] linux: username (main: test.js) 7/24/2021, 11:45:57 PM 
 
 Hello world
-··························································································
+········································································
 [ HELLO ERROR ] linux: username (main: test.js) 7/24/2021, 11:46:01 PM 
 
 This is an error message
-··························································································
+········································································
 ``` 
 
 Note the "Hello" namespace on the log header. Every message logged with the namespaced `log()` function will be prefixed with `HELLO`.
@@ -358,7 +356,7 @@ log('This is an example')
 
 As said, you can use chained methods to change your log behavior. The methods are:
 
-### save
+## save
 
 ```
 save(options?: SaveOptions): chain  
@@ -432,25 +430,22 @@ get(callback: Function, colors: boolean = false): chain
 
 Gets the current log output and a bunch of other useful information. This is handy when you want to send an specific log output/information to other destinations as a database, slack, telegram, etc.  
 
-
-This function accepts a callback that returns the log `output` and a `info` object. Also accepts a second boolean parameter which gets the `output` with colors; default is `false`. Note: if this very same function has been called 1000 times, the hash will be the same since is a hash per function. 
-
 ```js
 log('error', 'Example').get((output, info) => {
   // do whatever you want with the params
 });
 ```
 
-### Callback
+This function accepts a callback that returns the log `output` and a `info` object. Also accepts a second boolean parameter which gets the `output` with colors; default is `false`. Note: if this very same function has been called 1000 times, the hash will be the same since is a hash per function. 
 
-The callback has the following signature:
+### Callback
 
 ```
 cb(output: string, info: object): unknown
 ```
 
 | param | description |
-|--|--|--|
+|---|---|---|
 | output | the log output as string, with the header, exactly as showed on the console (std) |
 | info | an object containing useful information about the triggered log |
 
@@ -462,7 +457,7 @@ For the given example, the `output` would be the following string:
 [ CONSOLE ERROR ] linux: username (main: test.js) 7/26/2021, 9:42:49 PM 
 
 Example
-··························································································
+········································································
 ```
 
 ### Info
