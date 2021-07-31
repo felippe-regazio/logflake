@@ -478,10 +478,10 @@ The `info` object returns the following properties:
 ## fire
 
 ```
-fire(level?: string): chain
+fire(level?: string, args?: any): chain
 ```
 
-When using references, you can use `fire` to trigger the referenced log. When using `fire`, you also gets a new log function. The `level` parameter on this function overrides the original log level. For example:
+When using references, you can use `fire` to trigger the referenced log. When using `fire`, you also gets a new log function. The `level` parameter on this function overrides the original log level, and the `args` increments the original parameters. For example:
 
 ```js
 const logError = log('quiet', 'Unexpected error');
@@ -507,6 +507,32 @@ if (someErrorCheck) {
 if (anotherErrorCheck) {
   logError.fire('warn');  // log WARN "Generic message" x1
 }
+```
+
+Or increment te original parameters:
+
+```js
+const reportFileError = log('quiet', 'There was an error on the file %s');
+
+// output: There was an error on the file index.js
+reportFileError.fire('error', 'index.js');
+```
+
+```js
+const logProcessedObject = log('quiet', 'Object processed: ');
+
+// output: Object processed: { fizz: 1, buzz: 2 }
+logProcessedObject.fire('info', { fizz: 1, buzz: 2});
+
+// output: Object processed: { fizz: 1, buzz: 2 } { fizzbuzz: 3 }
+logProcessedObject.fire('info', { fizz: 1, buzz: 2}, { fizzbuzz: 3 });
+```
+
+When calling with a level different than "quiet", the first log will be triggered
+
+```js
+const info = log('info', 'Something happened'); // will log "Something happened"
+logIt.fire(); // will log "Something happened" again (produces a new log function)
 ```
 
 # Events

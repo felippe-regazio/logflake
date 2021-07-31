@@ -104,7 +104,11 @@ module.exports = function (options) {
             },
             fire: function (_level) {
                 if (_level === void 0) { _level = level; }
-                return log.apply(void 0, __spreadArray([_level], argc));
+                var args = [];
+                for (var _i = 1; _i < arguments.length; _i++) {
+                    args[_i - 1] = arguments[_i];
+                }
+                return log.apply(void 0, __spreadArray([_level], __spreadArray(__spreadArray([], argc), args)));
             }
         };
     }
