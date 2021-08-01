@@ -1,3 +1,4 @@
+coverage
 node_modules
 test/logs/*
 !test/logs/.gitkeep

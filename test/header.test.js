@@ -2,7 +2,6 @@ import Header  from '../dist/header.js';
 import defaults  from '../dist/defaults';
 import logger from '../dist/index';
 import helpers from '../dist/helpers.js';
-import { expect } from '@jest/globals';
 
 const mockConsole = jest.fn();
 
