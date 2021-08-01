@@ -24,8 +24,8 @@ var Helpers = (function () {
             quiet: 'black',
         };
     };
-    Helpers.prototype.getDateTime = function () {
-        return ' ' + new Date().toLocaleString(this.options.dateLocale);
+    Helpers.prototype.getDateTime = function (dateLocale) {
+        return ' ' + new Date().toLocaleString(dateLocale || this.options.dateLocale);
     };
     Helpers.prototype.getMain = function () {
         var _a;
@@ -63,12 +63,12 @@ var Helpers = (function () {
         var _line = (this.options.linesChar).repeat(size);
         return _chalk.gray(_line);
     };
-    Helpers.prototype.getEnDateStr = function () {
-        return new Date().toISOString()
-            .replace(/T.*/, '')
-            .split('-')
-            .reverse()
-            .join('-');
+    Helpers.prototype.getDateStr = function () {
+        var date = new Date();
+        var day = date.getDate();
+        var year = date.getFullYear();
+        var month = date.getMonth() + 1;
+        return year + "-" + month + "-" + day;
     };
     Helpers.prototype.noopChain = function (chain) {
         var _this = this;

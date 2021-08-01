@@ -63,7 +63,7 @@ var Output = (function () {
             level = 'log';
         }
         var chalk = this.helpers.getChalk();
-        var stream = fs_1.default.createWriteStream(dest + "/" + this.helpers.getEnDateStr() + ".log", { flags: 'a' });
+        var stream = fs_1.default.createWriteStream(dest + "/" + this.helpers.getDateStr() + ".log", { flags: 'a' });
         var customConsole = new console.Console({ stdout: stream, stderr: stream });
         stream.on('error', function (error) {
             console.error(chalk.yellow('(!) Could not save the log. Error: \n'));
