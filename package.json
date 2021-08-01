@@ -13,8 +13,8 @@
   ],
   "scripts": {
     "dev": "tsc --watch",
-    "test": "jest ./test",
-    "build": "rm -rf ./dist && tsc"
+    "build": "rm -rf ./dist && tsc",
+    "test": "jest --collectCoverage ./test"
   },
   "author": "Felippe Regazio",
   "license": "MIT",
