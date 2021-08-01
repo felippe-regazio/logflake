@@ -50,7 +50,7 @@ export default class Output {
     if (level === 'quiet') { level = 'log' }
     
     const chalk = this.helpers.getChalk();
-    const stream = fs.createWriteStream(`${dest}/${this.helpers.getEnDateStr()}.log`, { flags: 'a' });
+    const stream = fs.createWriteStream(`${dest}/${this.helpers.getDateStr()}.log`, { flags: 'a' });
     const customConsole = new console.Console({ stdout: stream, stderr: stream });
     
     stream.on('error', error => {

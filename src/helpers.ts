@@ -24,8 +24,8 @@ export default class Helpers {
     }
   }
 
-  getDateTime(): string {
-    return ' ' + new Date().toLocaleString(this.options.dateLocale);
+  getDateTime(dateLocale?: string): string {
+    return ' ' + new Date().toLocaleString(dateLocale || this.options.dateLocale);
   }
 
   getMain(): string {
@@ -74,12 +74,14 @@ export default class Helpers {
     return _chalk.gray(_line);
   }
   
-  getEnDateStr(): string {
-    return new Date().toISOString()
-      .replace(/T.*/,'')
-      .split('-')
-      .reverse()
-      .join('-');
+  getDateStr(): string {
+    const date = new Date();
+    const day = date.getDate();
+    const year = date.getFullYear();
+    /* months are 0 indexed in JS */
+    const month = date.getMonth() + 1;
+
+    return `${year}-${month}-${day}`;
   }
 
   noopChain(chain: Function): Chain {
