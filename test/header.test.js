@@ -15,7 +15,6 @@ beforeEach(() => {
   mockConsole.mockReset();
 });
 
-
 describe('Test header module', () => {
   it('Check {prefix} option', () => {
     let log = null;
