@@ -100,21 +100,6 @@ module.exports = (options: Options = defaults): Function => {
         return keepChain();
       },
 
-      reset: (): Chain => {
-        tracker.mutateFnTrack(hash, {
-          callCount: 0,
-          fnDisabled: false,
-        });
-        
-        return keepChain();
-      },
-
-      disabled: (is: boolean = true): Chain => {
-        tracker.mutateFnTrack(hash, { fnDisabled: is });
-
-        return keepChain();
-      },
-
       get: (cb: Function, colors: boolean = false) => {
         const output: string = _output.getOutput(level, argc, hash, colors);
         const trace: string = new Error().stack.replace('Error\n', '');

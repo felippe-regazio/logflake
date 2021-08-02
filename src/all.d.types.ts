@@ -29,9 +29,7 @@ type Chain = {
   get: Function;
   save: Function;
   once: Function;
-  reset: Function
   fire: Function,
-  disabled: Function,
 }
 
 type FnTrack = {

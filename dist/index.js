@@ -74,18 +74,6 @@ module.exports = function (options) {
                 tracker_1.default.mutateFnTrack(hash, { fnDisabled: true });
                 return keepChain();
             },
-            reset: function () {
-                tracker_1.default.mutateFnTrack(hash, {
-                    callCount: 0,
-                    fnDisabled: false,
-                });
-                return keepChain();
-            },
-            disabled: function (is) {
-                if (is === void 0) { is = true; }
-                tracker_1.default.mutateFnTrack(hash, { fnDisabled: is });
-                return keepChain();
-            },
             get: function (cb, colors) {
                 if (colors === void 0) { colors = false; }
                 var output = _output.getOutput(level, argc, hash, colors);
