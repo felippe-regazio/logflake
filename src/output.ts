@@ -14,6 +14,7 @@ export default class Output {
 
   printf(level: string, args: Array<any>, hash: string, colors: boolean = this.options.colors, consoleInstance: Console = console): string {
     const content: string = this.getOutput(level, args, hash, colors);
+    
     consoleInstance[level](content);
 
     this.options.lines && 
@@ -48,11 +49,11 @@ export default class Output {
     return util.formatWithOptions.apply(null, [ formatOptions, ...args ]);
   }
 
-  save(dest: string, level:string, args: Array<any>, hash: string): void {
+  save(destDir: string, level:string, args: Array<any>, hash: string): void {
     if (level === 'quiet') { level = 'log' }
     
     const chalk = this.helpers.getChalk();
-    const stream = fs.createWriteStream(`${dest}/${this.helpers.getDateStr()}.log`, { flags: 'a' });
+    const stream = fs.createWriteStream(`${destDir}/${this.helpers.getDateStr()}.log`, { flags: 'a' });
     const customConsole = new console.Console({ stdout: stream, stderr: stream });
     
     stream.on('error', error => {
