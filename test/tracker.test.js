@@ -9,7 +9,7 @@ beforeAll(() => {
   });
 });
 
-describe('Test tracker', () => {
+describe('Test tracker module', () => {
   const log = logger();
 
   it('Test if track properties are right', () => {

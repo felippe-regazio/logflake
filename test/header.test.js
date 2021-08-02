@@ -16,7 +16,7 @@ beforeEach(() => {
 });
 
 
-describe('Test console header output', () => {
+describe('Test header module', () => {
   it('Check {prefix} option', () => {
     let log = null;
     let output = '';

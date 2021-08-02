@@ -9,7 +9,7 @@ beforeAll(() => {
   });
 });
 
-describe('Test helpers with default options', () => {
+describe('Test helpers module', () => {
   const _helpers = new Helpers(defaults);
 
   it('getChalk', () => {
