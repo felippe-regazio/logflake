@@ -41,14 +41,14 @@ module.exports = function (options) {
         if (options.disabled) {
             return _helpers.noopChain(chain);
         }
-        var track = tracker_1.default.fnTrack();
-        if (track.fnDisabled) {
+        var _track = tracker_1.default.fnTrack();
+        if (_track.fnDisabled) {
             return _helpers.noopChain(chain);
         }
         if (!options.alwaysQuiet && level !== 'quiet') {
-            _output.printf(level, args, track.hash);
+            _output.printf(level, args, _track.hash);
         }
-        var _chain = chain(level, args, track.hash);
+        var _chain = chain(level, args, _track.hash);
         _chain.get(function () {
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {

@@ -71,10 +71,9 @@ var Helpers = (function () {
         return year + "-" + month + "-" + day;
     };
     Helpers.prototype.noopChain = function (chain) {
-        var _this = this;
         var noop = chain();
         Object.keys(noop).forEach(function (fn) {
-            noop[fn] = function () { return _this.noopChain; };
+            noop[fn] = function () { return noop; };
         });
         return noop;
     };
