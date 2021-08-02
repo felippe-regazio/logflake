@@ -53,17 +53,17 @@ module.exports = (options: Options = defaults): Function => {
       return _helpers.noopChain(chain);
     }
 
-    const track: FnTrack = tracker.fnTrack();
+    const _track: FnTrack = tracker.fnTrack();
 
-    if (track.fnDisabled) {
+    if (_track.fnDisabled) {
       return _helpers.noopChain(chain);
     }
     
     if (!options.alwaysQuiet && level !== 'quiet') {
-      _output.printf(level, args, track.hash);
+      _output.printf(level, args, _track.hash);
     }
 
-    const _chain = chain(level, args, track.hash);
+    const _chain = chain(level, args, _track.hash);
     _chain.get((...args: any) => options.onLog(...args));
     
     return options.alwaysSave ? _chain.save({ force: true }) : _chain;

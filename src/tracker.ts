@@ -10,9 +10,10 @@ const FnTracker = class {
   fnTrack(): FnTrack {
     const hash: string = this.fnCreateHash();
     const fnTrack: FnTrack = this.fnPool[hash] || {};
-    const callCount = this.callCountInc(fnTrack.callCount || 0);
-
-    if (!fnTrack || fnTrack.fnDisabled !== true) {
+    
+    if (!fnTrack.fnDisabled) {
+      const callCount = this.callCountInc(fnTrack.callCount || 0);
+      
       Object.assign(fnTrack, <FnTrack>{
         hash,
         callCount,
@@ -21,7 +22,7 @@ const FnTracker = class {
     }
 
     this.fnPool[hash] = fnTrack;
-    
+
     return fnTrack;
   }
 

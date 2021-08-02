@@ -22,7 +22,7 @@ var FnTracker = (function () {
     class_1.prototype.fnTrack = function () {
         var hash = this.fnCreateHash();
         var fnTrack = this.fnPool[hash] || {};
-        if (!fnTrack || !fnTrack.fnDisabled) {
+        if (!fnTrack.fnDisabled) {
             var callCount = this.callCountInc(fnTrack.callCount || 0);
             Object.assign(fnTrack, {
                 hash: hash,
