@@ -28,15 +28,16 @@ var Output = (function () {
         this.options = options;
         this.helpers = new helpers_1.default(options);
     }
-    Output.prototype.printf = function (level, args, hash, colors, consl) {
+    Output.prototype.printf = function (level, args, hash, colors, consoleInstance) {
         if (colors === void 0) { colors = this.options.colors; }
-        if (consl === void 0) { consl = console; }
+        if (consoleInstance === void 0) { consoleInstance = console; }
         var content = this.getOutput(level, args, hash, colors);
-        consl[level](content);
+        consoleInstance[level](content);
         this.options.lines &&
-            consl.log(this.helpers.line(colors));
+            consoleInstance.log(this.helpers.line(colors));
         this.options.linebreak &&
-            consl.log('');
+            consoleInstance.log('');
+        return content;
     };
     Output.prototype.getOutput = function (level, args, hash, colors) {
         if (colors === void 0) { colors = this.options.colors; }

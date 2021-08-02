@@ -12,15 +12,17 @@ export default class Output {
     this.helpers = new Helpers(options);
   }
 
-  printf(level: string, args: Array<any>, hash: string, colors: boolean = this.options.colors, consl: Console = console) {
+  printf(level: string, args: Array<any>, hash: string, colors: boolean = this.options.colors, consoleInstance: Console = console): string {
     const content: string = this.getOutput(level, args, hash, colors);
-    consl[level](content);
+    consoleInstance[level](content);
 
     this.options.lines && 
-      consl.log(this.helpers.line(colors));
+      consoleInstance.log(this.helpers.line(colors));
     
     this.options.linebreak && 
-      consl.log('');
+      consoleInstance.log('');
+
+    return content;
   }  
 
   getOutput(level: string, args: any, hash: string, colors: boolean = this.options.colors): string {
