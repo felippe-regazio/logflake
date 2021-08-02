@@ -37,11 +37,15 @@ const FnTracker = class {
   }
 
   callCountInc(callCount: number): number {
+    if (callCount < 0) callCount = 0;
+
     return callCount < Number.MAX_SAFE_INTEGER ? ++callCount : callCount;
   }
 
-  mutateFnTrack(hash: string, overrides: FnTrack): FnTrack {
+  mutateFnTrack(hash: string, overrides: FnTrack = {}): FnTrack {
     const track = this.fnPool[hash];
+
+    delete overrides.hash;
 
     if (track) {
       this.fnPool[hash] = {

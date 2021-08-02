@@ -41,10 +41,14 @@ var FnTracker = (function () {
         return md5_1.default(trace);
     };
     class_1.prototype.callCountInc = function (callCount) {
+        if (callCount < 0)
+            callCount = 0;
         return callCount < Number.MAX_SAFE_INTEGER ? ++callCount : callCount;
     };
     class_1.prototype.mutateFnTrack = function (hash, overrides) {
+        if (overrides === void 0) { overrides = {}; }
         var track = this.fnPool[hash];
+        delete overrides.hash;
         if (track) {
             this.fnPool[hash] = __assign(__assign({}, track), overrides);
         }
