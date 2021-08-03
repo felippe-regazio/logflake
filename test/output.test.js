@@ -50,6 +50,6 @@ describe('Test output module', () => {
       expect(fs.readFileSync(destFile).includes(out)).toBe(true);
 
       done();
-    }, 500);
+    }, 300);
   });
 });
