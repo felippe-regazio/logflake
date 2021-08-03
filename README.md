@@ -439,7 +439,7 @@ cb(output: string, info: object): unknown
 ```
 
 | param | description |
-|---|---|---|
+|---|---|
 | output | the log output as string, with the header, exactly as showed on the console (std) |
 | info | an object containing useful information about the triggered log |
 
