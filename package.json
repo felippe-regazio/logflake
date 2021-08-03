@@ -14,7 +14,7 @@
   "scripts": {
     "dev": "tsc --watch",
     "build": "rm -rf ./dist && tsc",
-    "test": "rm ./test/logs/*.log && jest --collectCoverage ./test"
+    "test": "rm -rf ./test/logs/*.log && jest --collectCoverage ./test"
   },
   "author": "Felippe Regazio",
   "license": "MIT",
