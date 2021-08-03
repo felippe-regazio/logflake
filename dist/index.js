@@ -91,7 +91,7 @@ module.exports = function (options) {
                 return keepChain();
             },
             fire: function (_level) {
-                if (_level === void 0) { _level = level; }
+                if (_level === void 0) { _level = 'log'; }
                 var args = [];
                 for (var _i = 1; _i < arguments.length; _i++) {
                     args[_i - 1] = arguments[_i];

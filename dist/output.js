@@ -67,10 +67,10 @@ var Output = (function () {
         var stream = fs_1.default.createWriteStream(destDir + "/" + this.helpers.getDateStr() + ".log", { flags: 'a' });
         var customConsole = new console.Console({ stdout: stream, stderr: stream });
         stream.on('error', function (error) {
-            console.error(chalk.yellow('(!) Could not save the log. Error: \n'));
+            console.trace(chalk.yellow('(!) Could not save the log. Error: \n'));
             console.error(error);
         });
-        setTimeout(function () { return _this.printf(level, args, hash, false, customConsole); }, 200);
+        setTimeout(function () { return _this.printf(level, args, hash, false, customConsole); }, 100);
     };
     return Output;
 }());

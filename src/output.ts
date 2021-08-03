@@ -57,10 +57,10 @@ export default class Output {
     const customConsole = new console.Console({ stdout: stream, stderr: stream });
     
     stream.on('error', error => {
-      console.error(chalk.yellow('(!) Could not save the log. Error: \n'));
+      console.trace(chalk.yellow('(!) Could not save the log. Error: \n'));
       console.error(error);
     });
     
-    setTimeout(() => this.printf(level, args, hash, false, customConsole), 200);
+    setTimeout(() => this.printf(level, args, hash, false, customConsole), 100);
   }  
 }

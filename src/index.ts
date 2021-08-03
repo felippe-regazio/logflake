@@ -118,7 +118,7 @@ module.exports = (options: Options = defaults): Function => {
         return keepChain();
       },
 
-      fire: (_level: string = level, ...args: any): Chain => {
+      fire: (_level: string = 'log', ...args: any): Chain => {
         return log(_level, ...[ ...argc, ...args ]);
       }      
     }
