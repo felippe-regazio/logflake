@@ -227,6 +227,7 @@ log('info', 'This is an example');
 | header | Turn on/off the log header with further information | true |
 | lines | When true, adds a separation line at the end of each log message | true |
 | linesChar | The char to be used to build the log separation lines | '·' |
+| headerTextColor | Defines the header information text color | gray |
 | dateLocale | The header datetime stamp locale. Accepts any JS Locale String | 'en' |
 | username | Shows the O.S. username on the log header | true |
 | datetime | Shows a datetime stamp on the log header | true |
@@ -246,6 +247,8 @@ log('info', 'This is an example');
 > Obs 1. You can check all the `format` available options here: https://nodejs.org/api/util.html#util_util_inspect_object_options  
 
 > Obs 2. Every `log()` log function position on the code is marked with a unique hash, so we can count how many times it was called, for example. 
+
+> Obs 3. The `headerTextColor` option accepts any Chalk color. Check all the modifiers here: https://www.npmjs.com/package/chalk
 
 # Namespaces (Prefix)
 

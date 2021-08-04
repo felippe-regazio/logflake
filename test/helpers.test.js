@@ -71,7 +71,7 @@ describe('Test helpers module', () => {
   it('line', () => {
     const line = _helpers.line();
 
-    expect(line.includes(defaults.linesChar.repeat(10))).toBe(true);
+    expect(line.includes(defaults.linesChar)).toBe(true);
   });
 
   it('getDateStr', () => {

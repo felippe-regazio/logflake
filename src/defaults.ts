@@ -18,6 +18,7 @@ const options: Options = {
   format: {},
   callCount: false,
   linebreak: false,
+  headerTextColor: 'gray',
   onLog: () => {},
 };
 

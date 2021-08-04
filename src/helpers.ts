@@ -25,32 +25,32 @@ export default class Helpers {
   }
 
   getDateTime(dateLocale?: string): string {
-    return ' ' + new Date().toLocaleString(dateLocale || this.options.dateLocale);
+    return new Date().toLocaleString(dateLocale || this.options.dateLocale);
   }
 
   getMain(): string {
     const hasMain = require?.main?.filename;
     const info = hasMain && path.parse(require.main.filename);
 
-    return info ? ` (main: ${info.name}${info.ext})` : '';
+    return info ? `(main: ${info.name}${info.ext})` : '';
   }
 
   getUsername(): string {
     const userinfo = os.userInfo();
     const username = userinfo.username;
     
-    return username ? ` ${username}` : ''; 
+    return username || ''; 
   }
 
   getPlatform(): string {
     const platform = process.platform;
     const separator = this.options.username ? ':' : '';
 
-    return platform ? ` ${platform}${separator}` : '';
+    return platform ? (platform + separator) : '';
   }
 
   getCallCountStr(track: FnTrack): string {    
-    let callCount = ' x' + (track.callCount || '(?)');
+    let callCount = 'x' + (track.callCount || '(?)');
     
     if (track.callCount === Number.MAX_SAFE_INTEGER) {
       callCount += ' (+)';

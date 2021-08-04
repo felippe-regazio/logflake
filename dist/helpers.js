@@ -25,26 +25,26 @@ var Helpers = (function () {
         };
     };
     Helpers.prototype.getDateTime = function (dateLocale) {
-        return ' ' + new Date().toLocaleString(dateLocale || this.options.dateLocale);
+        return new Date().toLocaleString(dateLocale || this.options.dateLocale);
     };
     Helpers.prototype.getMain = function () {
         var _a;
         var hasMain = (_a = require === null || require === void 0 ? void 0 : require.main) === null || _a === void 0 ? void 0 : _a.filename;
         var info = hasMain && path_1.default.parse(require.main.filename);
-        return info ? " (main: " + info.name + info.ext + ")" : '';
+        return info ? "(main: " + info.name + info.ext + ")" : '';
     };
     Helpers.prototype.getUsername = function () {
         var userinfo = os_1.default.userInfo();
         var username = userinfo.username;
-        return username ? " " + username : '';
+        return username || '';
     };
     Helpers.prototype.getPlatform = function () {
         var platform = process.platform;
         var separator = this.options.username ? ':' : '';
-        return platform ? " " + platform + separator : '';
+        return platform ? (platform + separator) : '';
     };
     Helpers.prototype.getCallCountStr = function (track) {
-        var callCount = ' x' + (track.callCount || '(?)');
+        var callCount = 'x' + (track.callCount || '(?)');
         if (track.callCount === Number.MAX_SAFE_INTEGER) {
             callCount += ' (+)';
         }

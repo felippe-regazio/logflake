@@ -18,6 +18,7 @@ type Options = {
   format?: object;
   callCount?: boolean,
   linebreak?: boolean;
+  headerTextColor?: string;
   onLog?: Function;
 }
 

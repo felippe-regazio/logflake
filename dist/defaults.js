@@ -20,6 +20,7 @@ var options = {
     format: {},
     callCount: false,
     linebreak: false,
+    headerTextColor: 'gray',
     onLog: function () { },
 };
 exports.default = options;
