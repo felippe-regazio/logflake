@@ -243,12 +243,16 @@ log('info', 'This is an example');
 | format | Any valid option of the node `util.formatWithOptions()` function | {} |
 | linebreak | When true, adds a linebreak at the end of each log message | false |
 | onLog | Event triggered everytime a log is fired with the current function (see `Events` on this doc) |
+| slackDisabled | Will ignore the "slack" method, and wont send log results to slack | false |
+| slackWebHookUrl | Slack web hook URL used to send log messages directly to slack | null |
 
 > Obs 1. You can check all the `format` available options here: https://nodejs.org/api/util.html#util_util_inspect_object_options  
 
 > Obs 2. Every `log()` log function position on the code is marked with a unique hash, so we can count how many times it was called, for example. 
 
 > Obs 3. The `headerTextColor` option accepts any Chalk color. Check all the modifiers here: https://www.npmjs.com/package/chalk
+
+> Obs 4. You can see how to get a Slack Webhook Url here: https://slack.com/intl/en-br/help/articles/115005265063-Incoming-webhooks-for-Slack
 
 # Namespaces (Prefix)
 
@@ -527,6 +531,40 @@ logProcessedObject.fire('info', { fizz: 1, buzz: 2});
 
 // output: Object processed: { fizz: 1, buzz: 2 } { fizzbuzz: 3 }
 logProcessedObject.fire('info', { fizz: 1, buzz: 2}, { fizzbuzz: 3 });
+```
+
+## slack
+
+```
+slack(options?: object, callback?: function): chain
+```
+
+This methods sends the current message being log directly to slack. To do it, you must first set the option "slackWebHookUrl" on you LogFlake instance. You can see how to get your Slack Webhook URL here: https://slack.com/intl/en-br/help/articles/115005265063-Incoming-webhooks-for-Slack.
+
+After that, you can send logs directly to slack like this:
+
+```js
+const log = require('logflake')({
+  slackDisabled: false,
+  slackWebHookUrl: 'https://hooks.slack.com/services/yourwebhooktoken',
+});
+
+log('Hello World!').slack();
+```
+
+The log above will be sent to slack. The channel and other details are configured while getting your webhook url. The "slackDisabled" option is false by default, you can ommit it, or turn true if you want to disabled slack messages in a given environment. The slack functions has 2 params: 1. options: which accepts any slack webhook option, and 2. a callback that will run as soon the message has been delivered.
+
+```js
+const log = require('logflake')({
+  slackDisabled: false,
+  slackWebHookUrl: 'https://hooks.slack.com/services/yourwebhooktoken',
+});
+
+log('Hello World!').slack({ icon_emoji: ':bell:' }, status => {
+  const messageDelivered = status.text === 'ok';
+
+  //...
+});
 ```
 
 # Events
