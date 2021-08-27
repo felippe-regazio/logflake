@@ -20,6 +20,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var path_1 = __importDefault(require("path"));
+var slack_1 = __importDefault(require("./slack"));
 var tracker_1 = __importDefault(require("./tracker"));
 var helpers_1 = __importDefault(require("./helpers"));
 var output_1 = __importDefault(require("./output"));
@@ -29,6 +30,7 @@ module.exports = function (options) {
     options = typeof options === 'string' ? __assign(__assign({}, defaults_1.default), { prefix: options }) : __assign(__assign({}, defaults_1.default), options);
     var _output = new output_1.default(options);
     var _helpers = new helpers_1.default(options);
+    var _slack = new slack_1.default();
     function log(level) {
         var args = [];
         for (var _i = 1; _i < arguments.length; _i++) {
@@ -97,6 +99,19 @@ module.exports = function (options) {
                     args[_i - 1] = arguments[_i];
                 }
                 return log.apply(void 0, __spreadArray([_level], __spreadArray(__spreadArray([], argc), args)));
+            },
+            slack: function (slackOptions, cb) {
+                var webHookUrl = options.slackWebHookUrl;
+                if (!options.slackDisabled && webHookUrl) {
+                    var text = _output.getOutput(level, argc, hash, false);
+                    var payload = __assign(__assign({}, slackOptions), { text: text });
+                    _slack.send(payload, webHookUrl)
+                        .then(cb)
+                        .catch(function (error) {
+                        console.warn("Logflake failed to send slack message: " + error);
+                    });
+                }
+                return keepChain();
             }
         };
     }

@@ -21,6 +21,8 @@ var options = {
     callCount: false,
     linebreak: false,
     headerTextColor: 'gray',
+    slackWebHookUrl: null,
+    slackDisabled: false,
     onLog: function () { },
 };
 exports.default = options;
