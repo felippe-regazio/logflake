@@ -19,6 +19,8 @@ const options: Options = {
   callCount: false,
   linebreak: false,
   headerTextColor: 'gray',
+  slackWebHookUrl: null,
+  slackDisabled: false,
   onLog: () => {},
 };
 

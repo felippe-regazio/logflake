@@ -1,4 +1,5 @@
 import path from 'path';
+import SlackAPI from './slack';
 import tracker from './tracker';
 import Helpers from './helpers';
 import Output from './output';
@@ -26,6 +27,7 @@ module.exports = (options: Options = defaults): Function => {
 
   const _output = new Output(options);
   const _helpers = new Helpers(options);
+  const _slack = new SlackAPI();
 
   /**
    * This is a log function with same API as Console. The first param can be a valid log level,
@@ -100,7 +102,7 @@ module.exports = (options: Options = defaults): Function => {
         return keepChain();
       },
 
-      get: (cb: Function, colors: boolean = false) => {
+      get: (cb: Function, colors: boolean = false): Chain => {
         const output: string = _output.getOutput(level, argc, hash, colors);
         const trace: string = new Error().stack.replace('Error\n', '');
         const date: Date = new Date();
@@ -120,7 +122,24 @@ module.exports = (options: Options = defaults): Function => {
 
       fire: (_level: string = 'log', ...args: any): Chain => {
         return log(_level, ...[ ...argc, ...args ]);
-      }      
+      },
+
+      slack: (slackOptions: any, cb: () => {}): Chain => {
+        const webHookUrl = options.slackWebHookUrl;
+
+        if (!options.slackDisabled && webHookUrl) {
+          const text: string = _output.getOutput(level, argc, hash, false);
+          const payload = { ...slackOptions, text };
+
+          _slack.send(payload, webHookUrl)
+            .then(cb)
+            .catch(error => {
+              console.warn(`Logflake failed to send slack message: ${error}`);
+            });
+        }
+
+        return keepChain();
+      }
     }
   }
 

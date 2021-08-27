@@ -19,6 +19,8 @@ type Options = {
   callCount?: boolean,
   linebreak?: boolean;
   headerTextColor?: string;
+  slackDisabled?: boolean;
+  slackWebHookUrl?: string;
   onLog?: Function;
 }
 
@@ -31,6 +33,7 @@ type Chain = {
   save: Function;
   once: Function;
   fire: Function,
+  slack: Function,
 }
 
 type FnTrack = {
