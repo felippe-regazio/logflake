@@ -7,18 +7,18 @@ const logger = require('logflake');
 const log = logger({ logDir: './logs' });
 
 /**
- * here are some usage examples. to the last one (the error) we ask the logger
- * to save the output on a logfile at ./logs. you can also choose to save all
- * the logs output automatically, keep reading the docs to know more about
+ * here are some usage examples. with logflake you can give the Noe Console
+ * some cool powers as automatically save logs on the disk, or send this logs
+ * directly to some slack channel, track the logs and a lot of more cool things. 
  */
 
 log('Hello world');
 
 log('Wellcome %s', 'dev');
 
-log('warn', 'Oh no, this is a waning');
+log('warn', 'Oh no, this is a waning').save();
 
-log('error', 'Oh no, an error has occurred!').save();
+log('error', 'Oh no, an error has occurred!').slack();
 ``` 
 
 Console message output example:
