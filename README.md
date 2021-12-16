@@ -18,6 +18,20 @@ This is an error message
 ········································································
 ``` 
 
+# Installing
+
+You can install using `npm` or `yarn`
+
+```bash
+npm install logflake
+```
+
+or
+
+```bash
+yarn add logflake
+```
+
 # Examples
 
 Here are some examples of the Logflake Super Powers.
@@ -92,20 +106,6 @@ log('Whatever...');
 ```
 
 There are much more super powers, but those are the common ones. Read this documentation to know all of them.
-
-# Installing
-
-You can install using `npm` or `yarn`
-
-```bash
-npm install logflake
-```
-
-or
-
-```bash
-yarn add logflake
-```
 
 # Getting Started
 
