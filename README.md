@@ -63,6 +63,24 @@ log('error', 'This is an error message').slack();
 log('warn', 'Oh no, this is a waning').slack();
 ```
 
+### Tracing
+
+Outputing a console trace:
+
+```js
+const log = require('logflake')();
+
+log('trace', 'This message will output a trace');
+```
+
+### Dont log to STD
+
+```js
+const log = require('logflake')({ logDir: './logs' });
+
+log('quiet', 'Anything will be outputed on std').save();
+```
+
 ### ES6 Module Usage
 
 ```js
@@ -205,39 +223,6 @@ const error = new Error('Unexpected error');
 
 log('error', 'An unexpected error has occurred: ', error);
 ``` 
-
-## Common Log() Examples
-
-```js
-// common log
-log('Im a common log', 'With many arguments', 'and Log level infered');
-
-// info log
-log('info', 'Im a info log level and my prefix is cyan');
-
-// warn log
-log('warn', 'Im a warning, i have a yellow prefix');
-``` 
-
-Logging an error:
-
-```js
-const where = 'myfile';
-
-log('error', 'This is an error on %s', where);
-```
-
-Outputing a console trace:
-
-```js
-log('trace', 'This message will output a trace');
-```
-
-Generating a log message in quiet mode:
-
-```js
-log('quiet', 'Anything will be outputed on std');
-```
 
 # Logger Options
 
