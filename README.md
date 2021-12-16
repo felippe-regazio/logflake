@@ -20,7 +20,7 @@ This is an error message
 
 # Examples
 
-Here are some examples of the Logflake Super Powers. There are much more, but those are the common ones:
+Here are some examples of the Logflake Super Powers.
 
 ### Common Logging
 
@@ -72,6 +72,8 @@ const log = logger({ options });
 
 log('Whatever...');
 ```
+
+There are much more super powers, but those are the common ones. Read this documentation to know all of them.
 
 # Installing
 
