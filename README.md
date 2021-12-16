@@ -6,19 +6,7 @@ LogFlake is a NodeJS console logger with superpowers. It has the same API as the
 const logger = require('logflake');
 const log = logger({ logDir: './logs' });
 
-/**
- * here are some usage examples. with logflake you can give the Noe Console
- * some cool powers as automatically save logs on the disk, or send this logs
- * directly to some slack channel, track the logs and a lot of more cool things. 
- */
-
-log('Hello world');
-
-log('Wellcome %s', 'dev');
-
-log('warn', 'Oh no, this is a waning').save();
-
-log('error', 'Oh no, an error has occurred!').slack();
+log('error', 'This is an error message').save();
 ``` 
 
 Console message output example:
@@ -29,6 +17,61 @@ Console message output example:
 This is an error message
 ········································································
 ``` 
+
+# Examples
+
+Here are some examples of the Logflake Super Powers. There are much more, but those are the common ones:
+
+### Common Logging
+
+The Console API remains the same:
+
+```js
+const log = require('log')();
+
+log('Same', 'Console', 'API', this);
+
+log('Wellcome %s', 'dev');
+
+log('warn', 'Oh no, this is a waning');
+
+log('error', 'Oh no, an error has occurred!');
+
+log('info', process.env);
+``` 
+
+### Saving to files
+
+You can save log output on disk, the files willl be automatically organized by date:
+
+```js 
+const log = require('logflake')({ logDir: './logs' });
+
+log('error', 'This is an error message').save();
+log('warn', 'Oh no, this is a waning').save();
+
+```
+
+### Sending to Slack
+
+LogFlake allows you to send logs directly from runtime to Slack:
+
+```js
+const log = require('logflake')({ slackWebHookUrl: '<slack-webhook-url>' });
+
+log('error', 'This is an error message').slack();
+log('warn', 'Oh no, this is a waning').slack();
+```
+
+### ES6 Module Usage
+
+```js
+import logger from 'logflake'
+
+const log = logger({ options });
+
+log('Whatever...');
+```
 
 # Installing
 
